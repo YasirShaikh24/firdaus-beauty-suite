@@ -43,14 +43,11 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Button variant="outline" size="sm" asChild>
-              <a href="tel:+919876543210">
-                <Phone className="h-4 w-4" />
-                Call Now
-              </a>
-            </Button>
             <Button variant="hero" size="sm" asChild>
               <Link to="/contact">Book Now</Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/admin">Admin</Link>
             </Button>
           </div>
 
@@ -80,14 +77,11 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t">
-                <Button variant="outline" size="sm" asChild>
-                  <a href="tel:+919876543210">
-                    <Phone className="h-4 w-4" />
-                    Call Now
-                  </a>
-                </Button>
                 <Button variant="hero" size="sm" asChild>
                   <Link to="/contact">Book Appointment</Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/admin">Admin</Link>
                 </Button>
               </div>
             </nav>
