@@ -18,12 +18,6 @@ const FloatingContact = () => {
       href: "https://wa.me/919876543210",
       className: "bg-green-600 hover:bg-green-700",
     },
-    {
-      icon: Mail,
-      label: "Email",
-      href: "mailto:hello@firdausmakeover.com",
-      className: "bg-blue-500 hover:bg-blue-600",
-    },
   ];
 
   return (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,183 +9,254 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Plus, Edit, Trash2, Upload, Eye } from "lucide-react";
+import { LogOut, Plus, Edit, Trash2, Upload } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Admin = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [contacts, setContacts] = useState([]);
-  const [editingService, setEditingService] = useState(null);
-  const [editingGallery, setEditingGallery] = useState(null);
+  const [settings, setSettings] = useState(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if admin is logged in
-    const adminLoggedIn = localStorage.getItem("adminLoggedIn");
-    if (adminLoggedIn === "true") {
-      setIsLoggedIn(true);
-      loadData();
-    }
+    checkAuth();
   }, []);
 
-  const loadData = () => {
-    const savedServices = localStorage.getItem("adminServices");
-    const savedGallery = localStorage.getItem("adminGallery");
-    const savedContacts = localStorage.getItem("adminContacts");
-    
-    if (savedServices) setServices(JSON.parse(savedServices));
-    if (savedGallery) setGallery(JSON.parse(savedGallery));
-    if (savedContacts) setContacts(JSON.parse(savedContacts));
+  const checkAuth = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/admin-login');
+        return;
+      }
+      
+      setIsAuthenticated(true);
+      loadData();
+    } catch (error) {
+      console.error('Auth check error:', error);
+      navigate('/admin-login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (loginForm.email === "admin123" && loginForm.password === "123") {
-      localStorage.setItem("adminLoggedIn", "true");
-      setIsLoggedIn(true);
-      loadData();
+  const loadData = async () => {
+    try {
+      // Load services
+      const { data: servicesData } = await supabase
+        .from('services')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (servicesData) setServices(servicesData);
+
+      // Load gallery
+      const { data: galleryData } = await supabase
+        .from('gallery')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (galleryData) setGallery(galleryData);
+
+      // Load contact messages
+      const { data: contactsData } = await supabase
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (contactsData) setContacts(contactsData);
+
+      // Load settings
+      const { data: settingsData } = await supabase
+        .from('parlor_settings')
+        .select('*')
+        .single();
+      if (settingsData) setSettings(settingsData);
+    } catch (error) {
+      console.error('Error loading data:', error);
       toast({
-        title: "Login Successful",
-        description: "Welcome to admin dashboard!",
-      });
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Invalid credentials. Use admin123 / 123",
+        title: "Error",
+        description: "Failed to load data",
         variant: "destructive",
       });
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminLoggedIn");
-    setIsLoggedIn(false);
-    setLoginForm({ email: "", password: "" });
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/admin-login');
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
   };
 
-  const saveServices = (updatedServices) => {
-    localStorage.setItem("adminServices", JSON.stringify(updatedServices));
-    setServices(updatedServices);
+  const addService = async (serviceData: any) => {
+    try {
+      const { error } = await supabase
+        .from('services')
+        .insert([serviceData]);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Service Added",
+        description: "New service has been added successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error adding service:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const saveGallery = (updatedGallery) => {
-    localStorage.setItem("adminGallery", JSON.stringify(updatedGallery));
-    setGallery(updatedGallery);
+  const updateService = async (id: string, serviceData: any) => {
+    try {
+      const { error } = await supabase
+        .from('services')
+        .update(serviceData)
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Service Updated",
+        description: "Service has been updated successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error updating service:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const addService = (serviceData) => {
-    const newService = {
-      id: Date.now(),
-      ...serviceData,
-      createdAt: new Date().toISOString()
-    };
-    const updatedServices = [...services, newService];
-    saveServices(updatedServices);
-    toast({
-      title: "Service Added",
-      description: "New service has been added successfully.",
-    });
+  const deleteService = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('services')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Service Deleted",
+        description: "Service has been deleted successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error deleting service:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const updateService = (id, serviceData) => {
-    const updatedServices = services.map(service => 
-      service.id === id ? { ...service, ...serviceData } : service
-    );
-    saveServices(updatedServices);
-    setEditingService(null);
-    toast({
-      title: "Service Updated",
-      description: "Service has been updated successfully.",
-    });
+  const addGalleryImage = async (imageData: any) => {
+    try {
+      const { error } = await supabase
+        .from('gallery')
+        .insert([imageData]);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Image Added",
+        description: "New image has been added to gallery.",
+      });
+    } catch (error: any) {
+      console.error('Error adding image:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const deleteService = (id) => {
-    const updatedServices = services.filter(service => service.id !== id);
-    saveServices(updatedServices);
-    toast({
-      title: "Service Deleted",
-      description: "Service has been deleted successfully.",
-    });
+  const deleteGalleryImage = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('gallery')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Image Deleted",
+        description: "Image has been deleted from gallery.",
+      });
+    } catch (error: any) {
+      console.error('Error deleting image:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const addGalleryImage = (imageData) => {
-    const newImage = {
-      id: Date.now(),
-      ...imageData,
-      uploadedAt: new Date().toISOString()
-    };
-    const updatedGallery = [...gallery, newImage];
-    saveGallery(updatedGallery);
-    toast({
-      title: "Image Added",
-      description: "New image has been added to gallery.",
-    });
+  const updateSettings = async (settingsData: any) => {
+    try {
+      const { error } = await supabase
+        .from('parlor_settings')
+        .update(settingsData)
+        .eq('id', settings.id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Settings Updated",
+        description: "Settings have been updated successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error updating settings:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const deleteGalleryImage = (id) => {
-    const updatedGallery = gallery.filter(image => image.id !== id);
-    saveGallery(updatedGallery);
-    toast({
-      title: "Image Deleted",
-      description: "Image has been deleted from gallery.",
-    });
-  };
-
-  if (!isLoggedIn) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
-        <Card className="w-full max-w-md shadow-elegant">
-          <CardHeader className="text-center">
-            <CardTitle className="font-playfair text-3xl text-primary">Admin Login</CardTitle>
-            <CardDescription>Login to manage Firdaus Makeover</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="text"
-                  value={loginForm.email}
-                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
-                  placeholder="admin123"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={loginForm.password}
-                  onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
-                  placeholder="123"
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full" variant="premium">
-                Login to Dashboard
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       <div className="container mx-auto px-4 py-8 pt-24">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="font-playfair text-4xl font-bold text-primary">Admin Dashboard</h1>
+            <h1 className="font-playfair text-3xl md:text-4xl font-bold text-primary">Admin Dashboard</h1>
             <p className="text-muted-foreground">Manage your beauty parlor website</p>
           </div>
           <Button onClick={handleLogout} variant="outline">
@@ -194,7 +266,7 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
           <Card className="gradient-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Services</CardTitle>
@@ -223,7 +295,7 @@ const Admin = () => {
 
         {/* Management Tabs */}
         <Tabs defaultValue="services" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
             <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="contacts">Messages</TabsTrigger>
@@ -233,15 +305,15 @@ const Admin = () => {
           {/* Services Management */}
           <TabsContent value="services" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Manage Services</h2>
-              <ServiceDialog onSave={addService} service={null} onClose={() => {}} />
+              <h2 className="text-xl md:text-2xl font-bold">Manage Services</h2>
+              <ServiceDialog onSave={addService} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map(service => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {services.map((service: any) => (
                 <ServiceCard
                   key={service.id}
                   service={service}
-                  onEdit={(service) => setEditingService(service)}
+                  onUpdate={updateService}
                   onDelete={deleteService}
                 />
               ))}
@@ -251,11 +323,11 @@ const Admin = () => {
           {/* Gallery Management */}
           <TabsContent value="gallery" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Manage Gallery</h2>
+              <h2 className="text-xl md:text-2xl font-bold">Manage Gallery</h2>
               <GalleryDialog onSave={addGalleryImage} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {gallery.map(image => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {gallery.map((image: any) => (
                 <GalleryCard
                   key={image.id}
                   image={image}
@@ -267,7 +339,7 @@ const Admin = () => {
 
           {/* Contact Messages */}
           <TabsContent value="contacts" className="space-y-6">
-            <h2 className="text-2xl font-bold">Contact Messages</h2>
+            <h2 className="text-xl md:text-2xl font-bold">Contact Messages</h2>
             <div className="space-y-4">
               {contacts.length === 0 ? (
                 <Card>
@@ -276,7 +348,7 @@ const Admin = () => {
                   </CardContent>
                 </Card>
               ) : (
-                contacts.map(contact => (
+                contacts.map((contact: any) => (
                   <ContactCard key={contact.id} contact={contact} />
                 ))
               )}
@@ -285,182 +357,122 @@ const Admin = () => {
 
           {/* Settings */}
           <TabsContent value="settings" className="space-y-6">
-            <h2 className="text-2xl font-bold">Settings</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle>Parlor Information</CardTitle>
-                <CardDescription>Update your beauty parlor details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Parlor Name</Label>
-                    <Input defaultValue="Firdaus Makeover" />
-                  </div>
-                  <div>
-                    <Label>Phone Number</Label>
-                    <Input defaultValue="+91 98765 43210" />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label>Address</Label>
-                    <Textarea defaultValue="123 Beauty Street, Fashion District, City - 400001" />
-                  </div>
-                </div>
-                <Button variant="premium">Save Settings</Button>
-              </CardContent>
-            </Card>
+            <h2 className="text-xl md:text-2xl font-bold">Parlor Settings</h2>
+            {settings && <SettingsForm settings={settings} onSave={updateSettings} />}
           </TabsContent>
         </Tabs>
-
-        {/* Edit Service Dialog */}
-        {editingService && (
-          <ServiceDialog
-            service={editingService}
-            onSave={(data) => updateService(editingService.id, data)}
-            onClose={() => setEditingService(null)}
-            isEdit={true}
-          />
-        )}
       </div>
     </div>
   );
 };
 
 // Service Card Component
-const ServiceCard = ({ service, onEdit, onDelete }) => (
-  <Card className="hover:shadow-elegant transition-all duration-300">
-    <CardHeader>
-      <div className="flex justify-between items-start">
-        <CardTitle className="text-lg">{service.name}</CardTitle>
-        <Badge variant="secondary">{service.category}</Badge>
-      </div>
-      <CardDescription>{service.description}</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-2xl font-bold text-primary">{service.price}</span>
-        <span className="text-sm text-muted-foreground">{service.duration}</span>
-      </div>
-      <div className="flex gap-2">
-        <Button size="sm" variant="outline" onClick={() => onEdit(service)}>
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button size="sm" variant="destructive" onClick={() => onDelete(service.id)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
+const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  return (
+    <>
+      <Card className="hover:shadow-elegant transition-all duration-300">
+        <CardHeader>
+          <CardTitle className="text-lg">{service.title}</CardTitle>
+          <CardDescription className="line-clamp-2">{service.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-2xl font-bold text-primary">₹{service.price}</span>
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setIsEditOpen(true)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => onDelete(service.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      {isEditOpen && (
+        <ServiceDialog
+          service={service}
+          onSave={(data: any) => {
+            onUpdate(service.id, data);
+            setIsEditOpen(false);
+          }}
+          onClose={() => setIsEditOpen(false)}
+        />
+      )}
+    </>
+  );
+};
 
 // Service Dialog Component
-const ServiceDialog = ({ service, onSave, onClose, isEdit = false }) => {
+const ServiceDialog = ({ service, onSave, onClose }: any) => {
   const [formData, setFormData] = useState({
-    name: service?.name || "",
-    category: service?.category || "bridal",
-    price: service?.price || "",
-    duration: service?.duration || "",
+    title: service?.title || "",
     description: service?.description || "",
-    features: service?.features?.join(", ") || ""
+    price: service?.price || "",
+    image_url: service?.image_url || "",
   });
-  const [open, setOpen] = useState(isEdit);
+  const [open, setOpen] = useState(!!service);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const serviceData = {
-      ...formData,
-      features: formData.features.split(",").map(f => f.trim()).filter(f => f)
-    };
-    onSave(serviceData);
-    if (!isEdit) {
-      setFormData({
-        name: "", category: "bridal", price: "", duration: "", description: "", features: ""
-      });
+    onSave(formData);
+    if (!service) {
+      setFormData({ title: "", description: "", price: "", image_url: "" });
       setOpen(false);
-    } else if (onClose) {
-      onClose();
     }
   };
 
-  if (isEdit && !onClose) return null;
-
   return (
-    <Dialog open={isEdit ? true : open} onOpenChange={isEdit && onClose ? onClose : setOpen}>
+    <Dialog open={open} onOpenChange={service ? onClose : setOpen}>
       <DialogTrigger asChild>
-        {!isEdit && (
-          <Button variant="premium">
+        {!service && (
+          <Button variant="default">
             <Plus className="h-4 w-4 mr-2" />
             Add Service
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Service" : "Add New Service"}</DialogTitle>
-          <DialogDescription>
-            {isEdit ? "Update service details" : "Add a new service to your offerings"}
-          </DialogDescription>
+          <DialogTitle>{service ? "Edit Service" : "Add New Service"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>Service Name</Label>
             <Input
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
           </div>
           <div>
-            <Label>Category</Label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              value={formData.category}
-              onChange={(e) => setFormData({...formData, category: e.target.value})}
-            >
-              <option value="bridal">Bridal</option>
-              <option value="party">Party</option>
-              <option value="hair">Hair</option>
-              <option value="skin">Skin Care</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Price</Label>
-              <Input
-                value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
-                placeholder="₹5,000"
-                required
-              />
-            </div>
-            <div>
-              <Label>Duration</Label>
-              <Input
-                value={formData.duration}
-                onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                placeholder="2 hours"
-                required
-              />
-            </div>
+            <Label>Price (₹)</Label>
+            <Input
+              type="number"
+              value={formData.price}
+              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              required
+            />
           </div>
           <div>
             <Label>Description</Label>
             <Textarea
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              required
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
           <div>
-            <Label>Features (comma separated)</Label>
-            <Textarea
-              value={formData.features}
-              onChange={(e) => setFormData({...formData, features: e.target.value})}
-              placeholder="HD Makeup, Hair Styling, Touch-ups"
+            <Label>Image URL</Label>
+            <Input
+              value={formData.image_url}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://..."
             />
           </div>
-          <Button type="submit" className="w-full" variant="premium">
-            {isEdit ? "Update Service" : "Add Service"}
+          <Button type="submit" className="w-full">
+            {service ? "Update Service" : "Add Service"}
           </Button>
         </form>
       </DialogContent>
@@ -469,74 +481,60 @@ const ServiceDialog = ({ service, onSave, onClose, isEdit = false }) => {
 };
 
 // Gallery Dialog Component
-const GalleryDialog = ({ onSave }) => {
+const GalleryDialog = ({ onSave }: any) => {
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
-    imageUrl: "",
-    category: "bridal"
+    image_url: "",
+    category: "",
   });
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
-    setFormData({ title: "", description: "", imageUrl: "", category: "bridal" });
+    setFormData({ title: "", image_url: "", category: "" });
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="premium">
+        <Button variant="default">
           <Upload className="h-4 w-4 mr-2" />
           Add Image
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Add Gallery Image</DialogTitle>
-          <DialogDescription>Add a new image to your portfolio gallery</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label>Image Title</Label>
+            <Label>Title</Label>
             <Input
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
           </div>
           <div>
             <Label>Image URL</Label>
             <Input
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-              placeholder="https://example.com/image.jpg"
+              value={formData.image_url}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://..."
               required
             />
           </div>
           <div>
             <Label>Category</Label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            <Input
               value={formData.category}
-              onChange={(e) => setFormData({...formData, category: e.target.value})}
-            >
-              <option value="bridal">Bridal</option>
-              <option value="party">Party</option>
-              <option value="hair">Hair</option>
-              <option value="makeup">Makeup</option>
-            </select>
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Textarea
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              placeholder="Bridal, Party, etc."
             />
           </div>
-          <Button type="submit" className="w-full" variant="premium">
+          <Button type="submit" className="w-full">
             Add Image
           </Button>
         </form>
@@ -546,49 +544,139 @@ const GalleryDialog = ({ onSave }) => {
 };
 
 // Gallery Card Component
-const GalleryCard = ({ image, onDelete }) => (
+const GalleryCard = ({ image, onDelete }: any) => (
   <Card className="overflow-hidden hover:shadow-elegant transition-all duration-300">
-    <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 relative">
-      {image.imageUrl && (
-        <img 
-          src={image.imageUrl} 
-          alt={image.title}
-          className="w-full h-full object-cover"
-          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
-        />
-      )}
-      <div className="absolute top-2 right-2 flex gap-2">
-        <Button size="sm" variant="destructive" onClick={() => onDelete(image.id)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
+    <div className="aspect-square relative">
+      <img
+        src={image.image_url}
+        alt={image.title}
+        className="w-full h-full object-cover"
+      />
     </div>
-    <CardContent className="p-3">
-      <h4 className="font-semibold text-sm">{image.title}</h4>
-      <Badge variant="secondary" className="mt-1 text-xs">{image.category}</Badge>
+    <CardContent className="p-4">
+      <h3 className="font-semibold mb-2">{image.title}</h3>
+      {image.category && <Badge variant="secondary" className="mb-2">{image.category}</Badge>}
+      <Button
+        size="sm"
+        variant="destructive"
+        className="w-full"
+        onClick={() => onDelete(image.id)}
+      >
+        <Trash2 className="h-4 w-4 mr-2" />
+        Delete
+      </Button>
     </CardContent>
   </Card>
 );
 
 // Contact Card Component
-const ContactCard = ({ contact }) => (
+const ContactCard = ({ contact }: any) => (
   <Card>
     <CardHeader>
       <div className="flex justify-between items-start">
         <div>
-          <CardTitle className="text-lg">{contact.name}</CardTitle>
-          <CardDescription>{contact.email} • {contact.phone}</CardDescription>
+          <CardTitle>{contact.name}</CardTitle>
+          <CardDescription>{contact.email}</CardDescription>
         </div>
-        <Badge variant="outline">{new Date(contact.createdAt).toLocaleDateString()}</Badge>
+        <Badge variant={contact.status === 'unread' ? 'default' : 'secondary'}>
+          {contact.status}
+        </Badge>
       </div>
     </CardHeader>
     <CardContent>
+      {contact.phone && <p className="text-sm mb-2"><strong>Phone:</strong> {contact.phone}</p>}
       <p className="text-sm">{contact.message}</p>
+      <p className="text-xs text-muted-foreground mt-2">
+        {new Date(contact.created_at).toLocaleDateString()}
+      </p>
     </CardContent>
   </Card>
 );
+
+// Settings Form Component
+const SettingsForm = ({ settings, onSave }: any) => {
+  const [formData, setFormData] = useState({
+    name: settings.name || "",
+    phone: settings.phone || "",
+    whatsapp: settings.whatsapp || "",
+    email: settings.email || "",
+    address: settings.address || "",
+    instagram: settings.instagram || "",
+    facebook: settings.facebook || "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Parlor Information</CardTitle>
+        <CardDescription>Update contact and social media information</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Parlor Name</Label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>WhatsApp</Label>
+              <Input
+                value={formData.whatsapp}
+                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label>Address</Label>
+              <Textarea
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Instagram URL</Label>
+              <Input
+                value={formData.instagram}
+                onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Facebook URL</Label>
+              <Input
+                value={formData.facebook}
+                onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+              />
+            </div>
+          </div>
+          <Button type="submit" className="w-full md:w-auto">
+            Save Settings
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default Admin;

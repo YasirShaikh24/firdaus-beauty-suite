@@ -47,7 +47,7 @@ const Header = () => {
               <Link to="/contact">Book Now</Link>
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link to="/admin">Admin</Link>
+              <Link to="/admin-login">Admin</Link>
             </Button>
           </div>
 
@@ -81,7 +81,7 @@ const Header = () => {
                   <Link to="/contact">Book Appointment</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/admin">Admin</Link>
+                  <Link to="/admin-login">Admin</Link>
                 </Button>
               </div>
             </nav>
