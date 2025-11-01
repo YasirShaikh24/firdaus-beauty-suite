@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Plus, Edit, Trash2, Upload } from "lucide-react";
+import { LogOut, Plus, Edit, Trash2, Upload, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const Admin = () => {
@@ -18,6 +19,7 @@ const Admin = () => {
   const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [settings, setSettings] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -67,6 +69,14 @@ const Admin = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (contactsData) setContacts(contactsData);
+
+      // Load appointments
+      const { data: appointmentsData } = await supabase
+        .from('appointments')
+        .select('*')
+        .order('appointment_date', { ascending: false })
+        .order('appointment_time', { ascending: false });
+      if (appointmentsData) setAppointments(appointmentsData);
 
       // Load settings
       const { data: settingsData } = await supabase
@@ -235,6 +245,87 @@ const Admin = () => {
     }
   };
 
+  const addAppointment = async (appointmentData: any) => {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .insert([appointmentData]);
+      
+      if (error) {
+        if (error.code === '23505') {
+          toast({
+            title: "Time Slot Unavailable",
+            description: "This time slot is already booked.",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw error;
+      }
+      
+      await loadData();
+      toast({
+        title: "Appointment Added",
+        description: "New appointment has been added successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error adding appointment:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateAppointment = async (id: string, appointmentData: any) => {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update(appointmentData)
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Appointment Updated",
+        description: "Appointment has been updated successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error updating appointment:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteAppointment = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      await loadData();
+      toast({
+        title: "Appointment Deleted",
+        description: "Appointment has been deleted successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error deleting appointment:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -266,7 +357,7 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
           <Card className="gradient-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Services</CardTitle>
@@ -285,7 +376,15 @@ const Admin = () => {
           </Card>
           <Card className="gradient-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Contact Messages</CardTitle>
+              <CardTitle className="text-lg">Appointments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-primary">{appointments.length}</div>
+            </CardContent>
+          </Card>
+          <Card className="gradient-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Messages</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-primary">{contacts.length}</div>
@@ -294,13 +393,42 @@ const Admin = () => {
         </div>
 
         {/* Management Tabs */}
-        <Tabs defaultValue="services" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+        <Tabs defaultValue="appointments" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5">
+            <TabsTrigger value="appointments">Appointments</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="contacts">Messages</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
+
+          {/* Appointments Management */}
+          <TabsContent value="appointments" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl md:text-2xl font-bold">Manage Appointments</h2>
+              <AppointmentDialog services={services} onSave={addAppointment} />
+            </div>
+            <div className="space-y-4">
+              {appointments.length === 0 ? (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No appointments yet</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                appointments.map((appointment: any) => (
+                  <AppointmentCard
+                    key={appointment.id}
+                    appointment={appointment}
+                    services={services}
+                    onUpdate={updateAppointment}
+                    onDelete={deleteAppointment}
+                  />
+                ))
+              )}
+            </div>
+          </TabsContent>
 
           {/* Services Management */}
           <TabsContent value="services" className="space-y-6">
@@ -363,6 +491,209 @@ const Admin = () => {
         </Tabs>
       </div>
     </div>
+  );
+};
+
+// Appointment Card Component
+const AppointmentCard = ({ appointment, services, onUpdate, onDelete }: any) => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  
+  const statusColors = {
+    pending: 'bg-yellow-500',
+    confirmed: 'bg-green-500',
+    cancelled: 'bg-red-500',
+    completed: 'bg-blue-500'
+  };
+
+  return (
+    <>
+      <Card className="hover:shadow-elegant transition-all duration-300">
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                {appointment.client_name}
+              </CardTitle>
+              <CardDescription className="mt-1">
+                {appointment.service_name}
+              </CardDescription>
+            </div>
+            <Badge className={statusColors[appointment.status]}>
+              {appointment.status}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm mb-4">
+            <p><strong>Date:</strong> {new Date(appointment.appointment_date).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> {appointment.appointment_time}</p>
+            <p><strong>Phone:</strong> {appointment.client_phone}</p>
+            {appointment.client_email && <p><strong>Email:</strong> {appointment.client_email}</p>}
+            {appointment.notes && <p><strong>Notes:</strong> {appointment.notes}</p>}
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setIsEditOpen(true)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => onDelete(appointment.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      {isEditOpen && (
+        <AppointmentDialog
+          appointment={appointment}
+          services={services}
+          onSave={(data: any) => {
+            onUpdate(appointment.id, data);
+            setIsEditOpen(false);
+          }}
+          onClose={() => setIsEditOpen(false)}
+        />
+      )}
+    </>
+  );
+};
+
+// Appointment Dialog Component
+const AppointmentDialog = ({ appointment, services, onSave, onClose }: any) => {
+  const [formData, setFormData] = useState({
+    client_name: appointment?.client_name || "",
+    client_email: appointment?.client_email || "",
+    client_phone: appointment?.client_phone || "",
+    service_name: appointment?.service_name || "",
+    appointment_date: appointment?.appointment_date || "",
+    appointment_time: appointment?.appointment_time || "10:00:00",
+    status: appointment?.status || "pending",
+    notes: appointment?.notes || "",
+  });
+  const [open, setOpen] = useState(!!appointment);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+    if (!appointment) {
+      setFormData({
+        client_name: "",
+        client_email: "",
+        client_phone: "",
+        service_name: "",
+        appointment_date: "",
+        appointment_time: "10:00:00",
+        status: "pending",
+        notes: "",
+      });
+      setOpen(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={appointment ? onClose : setOpen}>
+      <DialogTrigger asChild>
+        {!appointment && (
+          <Button variant="default">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Appointment
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{appointment ? "Edit Appointment" : "Add New Appointment"}</DialogTitle>
+          <DialogDescription>
+            {appointment ? "Update appointment details" : "Manually add an appointment"}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label>Client Name *</Label>
+            <Input
+              value={formData.client_name}
+              onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label>Phone *</Label>
+            <Input
+              value={formData.client_phone}
+              onChange={(e) => setFormData({ ...formData, client_phone: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label>Email</Label>
+            <Input
+              type="email"
+              value={formData.client_email}
+              onChange={(e) => setFormData({ ...formData, client_email: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Service *</Label>
+            <Select value={formData.service_name} onValueChange={(value) => setFormData({ ...formData, service_name: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select service" />
+              </SelectTrigger>
+              <SelectContent>
+                {services.map((service: any) => (
+                  <SelectItem key={service.id} value={service.title}>
+                    {service.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Date *</Label>
+              <Input
+                type="date"
+                value={formData.appointment_date}
+                onChange={(e) => setFormData({ ...formData, appointment_date: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label>Time *</Label>
+              <Input
+                type="time"
+                value={formData.appointment_time}
+                onChange={(e) => setFormData({ ...formData, appointment_time: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Status</Label>
+            <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              placeholder="Additional notes..."
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            {appointment ? "Update Appointment" : "Add Appointment"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

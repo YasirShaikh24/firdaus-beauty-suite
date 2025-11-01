@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import heroContact from "@/assets/hero-contact.jpg";
 
 const Contact = () => {
@@ -84,34 +85,74 @@ const Contact = () => {
     "Other"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.name || !formData.phone || !formData.service) {
+    if (!formData.name || !formData.phone || !formData.service || !formData.date) {
       toast({
         title: "Please fill required fields",
-        description: "Name, phone, and service are required.",
+        description: "Name, phone, service, and date are required.",
         variant: "destructive"
       });
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "Booking Request Sent!",
-      description: "We'll contact you within 2 hours to confirm your appointment.",
-    });
+    try {
+      // Parse the date to separate date and time
+      const appointmentDate = new Date(formData.date);
+      const dateStr = appointmentDate.toISOString().split('T')[0];
+      const timeStr = '10:00:00'; // Default time, can be made dynamic
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      service: "",
-      date: "",
-      message: ""
-    });
+      // Insert appointment
+      const { error } = await supabase
+        .from('appointments')
+        .insert({
+          client_name: formData.name,
+          client_email: formData.email || '',
+          client_phone: formData.phone,
+          service_name: formData.service,
+          appointment_date: dateStr,
+          appointment_time: timeStr,
+          notes: formData.message,
+          status: 'pending'
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast({
+            title: "Time Slot Unavailable",
+            description: "This time slot is already booked. Please choose another time.",
+            variant: "destructive"
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      toast({
+        title: "Booking Request Sent!",
+        description: "We'll contact you within 2 hours to confirm your appointment.",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        date: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error('Appointment booking error:', error);
+      toast({
+        title: "Booking Failed",
+        description: "There was an error submitting your booking. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {

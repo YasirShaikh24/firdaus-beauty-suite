@@ -66,7 +66,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        message: error.message
+        message: error instanceof Error ? error.message : 'Login failed'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
