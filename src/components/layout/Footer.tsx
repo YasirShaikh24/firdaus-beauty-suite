@@ -57,14 +57,14 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-muted-foreground hover:text-primary transition-colors">
-                  +91 98765 43210
+                <a href="tel:8799132161" className="text-muted-foreground hover:text-primary transition-colors">
+                  +91 87991 32161
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0" />
-                <a href="mailto:hello@firdausmakeover.com" className="text-muted-foreground hover:text-primary transition-colors">
-                  hello@firdausmakeover.com
+                <a href="mailto:yasirazimshaikh5440@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                  yasirazimshaikh5440@gmail.com
                 </a>
               </div>
               <div className="flex items-start space-x-3">
@@ -81,7 +81,7 @@ const Footer = () => {
         {/* Social Media & Copyright */}
         <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex space-x-4">
-            <a href="#" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
+            <a href="https://www.instagram.com/yasir_shaikh_24" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
               <Instagram className="h-5 w-5" />
             </a>
             <a href="#" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">

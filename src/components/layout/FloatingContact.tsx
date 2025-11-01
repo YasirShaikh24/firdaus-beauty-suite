@@ -9,13 +9,13 @@ const FloatingContact = () => {
     {
       icon: Phone,
       label: "Call",
-      href: "tel:+919876543210",
+      href: "tel:+918799132161",
       className: "bg-green-500 hover:bg-green-600",
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: "https://wa.me/919876543210",
+      href: "https://wa.me/918799132161",
       className: "bg-green-600 hover:bg-green-700",
     },
   ];

@@ -29,13 +29,13 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: ["+91 98765 43210", "+91 98765 43211"],
+      details: ["+91 87991 32161", "+91 87991 32161 (WhatsApp)"],
       action: "Call Now"
     },
     {
       icon: Mail,
       title: "Email Us",
-      details: ["hello@firdausmakeover.com", "bookings@firdausmakeover.com"],
+      details: ["yasirazimshaikh5440@gmail.com", "bookings@firdausmakeover.com"],
       action: "Send Email"
     },
     {
@@ -50,19 +50,19 @@ const Contact = () => {
     {
       icon: Phone,
       label: "Call",
-      href: "tel:+919876543210",
+      href: "tel:+918799132161",
       className: "bg-green-500 hover:bg-green-600"
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: "https://wa.me/919876543210",
+      href: "https://wa.me/918799132161",
       className: "bg-green-600 hover:bg-green-700"
     },
     {
       icon: Instagram,
       label: "Instagram",
-      href: "#",
+      href: "https://www.instagram.com/yasir_shaikh_24",
       className: "bg-pink-500 hover:bg-pink-600"
     },
     {
@@ -190,7 +190,7 @@ const Contact = () => {
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 87991 32161"
                         value={formData.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
                         className="pl-10"
@@ -206,7 +206,7 @@ const Contact = () => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="your.email@example.com"
+                      placeholder="yasirazimshaikh5440@gmail.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       className="pl-10"
