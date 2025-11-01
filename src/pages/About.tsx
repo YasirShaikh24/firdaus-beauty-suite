@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import heroAbout from "@/assets/hero-about.jpg";
 
 const About = () => {
   const stats = [
@@ -65,8 +66,16 @@ const About = () => {
   return (
     <div className="space-y-20">
       {/* Header */}
-      <section className="gradient-hero py-20 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section 
+        className="relative py-32 text-white overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroAbout})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">About Firdaus Makeover</h1>
           <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
             Where Beauty Meets Elegance - Your Trusted Beauty Destination Since 2019

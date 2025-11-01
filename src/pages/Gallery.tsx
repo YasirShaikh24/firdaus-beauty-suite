@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import heroGallery from "@/assets/hero-gallery.jpg";
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -110,8 +111,16 @@ const Gallery = () => {
   return (
     <div className="space-y-16">
       {/* Header */}
-      <section className="gradient-hero py-20 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section 
+        className="relative py-32 text-white overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroGallery})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">Our Portfolio</h1>
           <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto mb-8">
             Discover our stunning transformations and beauty creations
