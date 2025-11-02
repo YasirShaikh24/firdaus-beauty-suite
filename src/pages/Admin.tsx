@@ -12,40 +12,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Plus, Edit, Trash2, Upload, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isAdmin, isLoading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [settings, setSettings] = useState(null);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate('/admin-login');
-        return;
+    if (!isLoading) {
+      if (!user || !isAdmin) {
+        navigate('/auth');
+      } else {
+        loadData();
       }
-      
-      setIsAuthenticated(true);
-      loadData();
-    } catch (error) {
-      console.error('Auth check error:', error);
-      navigate('/admin-login');
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [user, isAdmin, isLoading, navigate]);
 
   const loadData = async () => {
     try {
@@ -95,8 +82,8 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/admin-login');
+    await signOut();
+    navigate('/');
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -337,7 +324,7 @@ const Admin = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!user || !isAdmin) {
     return null;
   }
 

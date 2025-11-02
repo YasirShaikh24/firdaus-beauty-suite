@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -46,9 +48,22 @@ const Header = () => {
             <Button variant="hero" size="sm" asChild>
               <Link to="/contact">Book Now</Link>
             </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/admin-login">Admin</Link>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/admin">Dashboard</Link>
+                  </Button>
+                )}
+                <Button variant="outline" size="sm" onClick={() => signOut()}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth">Admin Login</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,9 +95,22 @@ const Header = () => {
                 <Button variant="hero" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
                   <Link to="/contact">Book Appointment</Link>
                 </Button>
-                <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                  <Link to="/admin-login">Admin</Link>
-                </Button>
+                {user ? (
+                  <>
+                    {isAdmin && (
+                      <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                        <Link to="/admin">Dashboard</Link>
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" onClick={() => { signOut(); setIsMenuOpen(false); }}>
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                    <Link to="/auth">Admin Login</Link>
+                  </Button>
+                )}
               </div>
             </nav>
           </div>
