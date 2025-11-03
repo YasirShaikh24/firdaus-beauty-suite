@@ -1,12 +1,3 @@
--- Mock Admin Policy Function (Re-defined for safety, should be identical)
-CREATE OR REPLACE FUNCTION public.is_mock_admin()
-RETURNS BOOLEAN
-LANGUAGE SQL
-STABLE
-AS $$
-  SELECT auth.uid() = '00000000-0000-0000-0000-000000000000'
-$$;
-
 -- Create appointments table
 CREATE TABLE public.appointments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -26,12 +17,6 @@ CREATE TABLE public.appointments (
 
 -- Enable RLS
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
-
--- NEW: Mock Admin Policy: Full access to appointments
-CREATE POLICY "Mock Admin: Full access to appointments"
-ON public.appointments FOR ALL
-USING (public.is_mock_admin())
-WITH CHECK (public.is_mock_admin());
 
 -- Allow anyone to insert appointments (for booking)
 CREATE POLICY "Anyone can insert appointments" 

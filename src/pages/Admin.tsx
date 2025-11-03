@@ -12,27 +12,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Plus, Edit, Trash2, Upload, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Admin = () => {
-  const { user, isAdmin, isLoading, signOut } = useAuth();
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [settings, setSettings] = useState(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!user || !isAdmin) {
-        navigate('/auth');
-      } else {
-        loadData();
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/admin-login');
+        return;
       }
+      
+      setIsAuthenticated(true);
+      loadData();
+    } catch (error) {
+      console.error('Auth check error:', error);
+      navigate('/admin-login');
+    } finally {
+      setIsLoading(false);
     }
-  }, [user, isAdmin, isLoading, navigate]);
+  };
 
   const loadData = async () => {
     try {
@@ -82,8 +95,8 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    await signOut();
-    navigate('/');
+    await supabase.auth.signOut();
+    navigate('/admin-login');
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -324,7 +337,7 @@ const Admin = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -731,51 +744,13 @@ const ServiceDialog = ({ service, onSave, onClose }: any) => {
     price: service?.price || "",
     image_url: service?.image_url || "",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(!!service);
-  const { toast } = useToast();
-
-  const handleImageUpload = async (file: File) => {
-    try {
-      setUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError, data } = await supabase.storage
-        .from('services')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('services')
-        .getPublicUrl(filePath);
-
-      setFormData({ ...formData, image_url: publicUrl });
-      toast({
-        title: "Image Uploaded",
-        description: "Service image uploaded successfully",
-      });
-    } catch (error: any) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Upload Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
     if (!service) {
       setFormData({ title: "", description: "", price: "", image_url: "" });
-      setImageFile(null);
       setOpen(false);
     }
   };
@@ -820,27 +795,14 @@ const ServiceDialog = ({ service, onSave, onClose }: any) => {
             />
           </div>
           <div>
-            <Label>Service Image</Label>
+            <Label>Image URL</Label>
             <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setImageFile(file);
-                  handleImageUpload(file);
-                }
-              }}
-              disabled={uploading}
+              value={formData.image_url}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://..."
             />
-            {uploading && <p className="text-sm text-muted-foreground mt-2">Uploading...</p>}
-            {formData.image_url && (
-              <div className="mt-2">
-                <img src={formData.image_url} alt="Preview" className="w-full h-32 object-cover rounded" />
-              </div>
-            )}
           </div>
-          <Button type="submit" className="w-full" disabled={uploading}>
+          <Button type="submit" className="w-full">
             {service ? "Update Service" : "Add Service"}
           </Button>
         </form>
@@ -856,50 +818,12 @@ const GalleryDialog = ({ onSave }: any) => {
     image_url: "",
     category: "",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
-  const { toast } = useToast();
-
-  const handleImageUpload = async (file: File) => {
-    try {
-      setUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError, data } = await supabase.storage
-        .from('gallery')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('gallery')
-        .getPublicUrl(filePath);
-
-      setFormData({ ...formData, image_url: publicUrl });
-      toast({
-        title: "Image Uploaded",
-        description: "Gallery image uploaded successfully",
-      });
-    } catch (error: any) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Upload Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
     setFormData({ title: "", image_url: "", category: "" });
-    setImageFile(null);
     setOpen(false);
   };
 
@@ -925,26 +849,13 @@ const GalleryDialog = ({ onSave }: any) => {
             />
           </div>
           <div>
-            <Label>Gallery Image</Label>
+            <Label>Image URL</Label>
             <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setImageFile(file);
-                  handleImageUpload(file);
-                }
-              }}
-              disabled={uploading}
+              value={formData.image_url}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://..."
               required
             />
-            {uploading && <p className="text-sm text-muted-foreground mt-2">Uploading...</p>}
-            {formData.image_url && (
-              <div className="mt-2">
-                <img src={formData.image_url} alt="Preview" className="w-full h-32 object-cover rounded" />
-              </div>
-            )}
           </div>
           <div>
             <Label>Category</Label>
@@ -954,7 +865,7 @@ const GalleryDialog = ({ onSave }: any) => {
               placeholder="Bridal, Party, etc."
             />
           </div>
-          <Button type="submit" className="w-full" disabled={uploading || !formData.image_url}>
+          <Button type="submit" className="w-full">
             Add Image
           </Button>
         </form>

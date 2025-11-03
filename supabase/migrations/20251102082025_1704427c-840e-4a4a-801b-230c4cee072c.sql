@@ -1,12 +1,3 @@
--- Mock Admin Policy Function (Re-defined for safety, should be identical)
-CREATE OR REPLACE FUNCTION public.is_mock_admin()
-RETURNS BOOLEAN
-LANGUAGE SQL
-STABLE
-AS $$
-  SELECT auth.uid() = '00000000-0000-0000-0000-000000000000'
-$$;
-
 -- Create user roles enum and table
 CREATE TYPE public.app_role AS ENUM ('admin', 'user');
 
@@ -19,12 +10,6 @@ CREATE TABLE public.user_roles (
 );
 
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
-
--- NEW: Mock Admin Policy: Full access for mock user
-CREATE POLICY "Mock Admin: Full access to user_roles"
-ON public.user_roles FOR ALL
-USING (public.is_mock_admin())
-WITH CHECK (public.is_mock_admin());
 
 -- Security definer function to check roles
 CREATE OR REPLACE FUNCTION public.has_role(_user_id UUID, _role app_role)
@@ -68,12 +53,6 @@ CREATE TABLE public.home_content (
 
 ALTER TABLE public.home_content ENABLE ROW LEVEL SECURITY;
 
--- NEW: Mock Admin Policy: Full access for mock user
-CREATE POLICY "Mock Admin: Full access to home_content"
-ON public.home_content FOR ALL
-USING (public.is_mock_admin())
-WITH CHECK (public.is_mock_admin());
-
 -- RLS for home_content
 CREATE POLICY "Anyone can view home content"
 ON public.home_content FOR SELECT
@@ -97,12 +76,6 @@ CREATE TABLE public.about_content (
 );
 
 ALTER TABLE public.about_content ENABLE ROW LEVEL SECURITY;
-
--- NEW: Mock Admin Policy: Full access for mock user
-CREATE POLICY "Mock Admin: Full access to about_content"
-ON public.about_content FOR ALL
-USING (public.is_mock_admin())
-WITH CHECK (public.is_mock_admin());
 
 CREATE POLICY "Anyone can view about content"
 ON public.about_content FOR SELECT
