@@ -25,7 +25,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "Visit Our Salon",
-      details: ["123 Beauty Street", "Fashion District", "City - 400001"],
+      details: ["Location: Not Decided", "Will be updated soon with exact area"],
       action: "Get Directions"
     },
     {
@@ -354,8 +354,9 @@ const Contact = () => {
                 <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="h-12 w-12 mx-auto text-primary mb-2" />
-                    <p className="text-muted-foreground">Interactive Map</p>
-                    <p className="text-sm text-muted-foreground">123 Beauty Street, Fashion District</p>
+                    <p className="text-muted-foreground">Location Map</p>
+                    <p className="text-sm text-muted-foreground">Location: Not Decided</p>
+                    <p className="text-xs text-muted-foreground mt-2">Will be updated with exact area soon</p>
                   </div>
                 </div>
               </CardContent>

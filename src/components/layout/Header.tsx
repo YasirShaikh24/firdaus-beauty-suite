@@ -18,9 +18,10 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-card">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-card">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:scale-105 transition-transform">
             <img src={logo} alt="Firdaus Makeover" className="h-10 w-10" />
@@ -61,7 +62,7 @@ const Header = () => {
               </>
             ) : (
               <Button variant="outline" size="sm" asChild>
-                <Link to="/auth">Admin Login</Link>
+                <Link to="/auth">Login</Link>
               </Button>
             )}
           </div>
@@ -108,7 +109,7 @@ const Header = () => {
                   </>
                 ) : (
                   <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                    <Link to="/auth">Admin Login</Link>
+                    <Link to="/auth">Login</Link>
                   </Button>
                 )}
               </div>
@@ -117,6 +118,18 @@ const Header = () => {
         )}
       </div>
     </header>
+    
+    {/* Admin Notice Banner */}
+    {isAdmin && (
+      <div className="fixed top-16 left-0 right-0 z-40 bg-primary/10 border-b border-primary/20 py-2">
+        <div className="container mx-auto px-4">
+          <p className="text-sm text-center text-primary font-medium">
+            ✨ Admin Mode: Click "Dashboard" button to manage content, services, gallery, and appointments
+          </p>
+        </div>
+      </div>
+    )}
+  </>
   );
 };
 
