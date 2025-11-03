@@ -1,3 +1,13 @@
+-- Mock Admin Policy Function
+CREATE OR REPLACE FUNCTION public.is_mock_admin()
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+AS $$
+  -- The mock ID from src/contexts/AuthContext.tsx
+  SELECT auth.uid() = '00000000-0000-0000-0000-000000000000'
+$$;
+
 -- Create admin users table
 CREATE TABLE public.admin_users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -28,6 +38,12 @@ CREATE TABLE public.services (
 );
 
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+
+-- NEW: Mock Admin Policy: Full access to services
+CREATE POLICY "Mock Admin: Full access to services"
+ON public.services FOR ALL
+USING (public.is_mock_admin())
+WITH CHECK (public.is_mock_admin());
 
 -- Everyone can view services
 CREATE POLICY "Services are viewable by everyone"
@@ -67,6 +83,12 @@ CREATE TABLE public.gallery (
 
 ALTER TABLE public.gallery ENABLE ROW LEVEL SECURITY;
 
+-- NEW: Mock Admin Policy: Full access to gallery
+CREATE POLICY "Mock Admin: Full access to gallery"
+ON public.gallery FOR ALL
+USING (public.is_mock_admin())
+WITH CHECK (public.is_mock_admin());
+
 -- Everyone can view gallery
 CREATE POLICY "Gallery is viewable by everyone"
 ON public.gallery
@@ -86,6 +108,7 @@ FOR UPDATE
 TO authenticated
 USING (true);
 
+-- Only authenticated users can delete gallery
 CREATE POLICY "Authenticated users can delete gallery"
 ON public.gallery
 FOR DELETE
@@ -104,6 +127,12 @@ CREATE TABLE public.contact_messages (
 );
 
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- NEW: Mock Admin Policy: Full access to contact_messages
+CREATE POLICY "Mock Admin: Full access to contact_messages"
+ON public.contact_messages FOR ALL
+USING (public.is_mock_admin())
+WITH CHECK (public.is_mock_admin());
 
 -- Only authenticated users can view messages
 CREATE POLICY "Authenticated users can view contact messages"
@@ -139,6 +168,12 @@ CREATE TABLE public.parlor_settings (
 );
 
 ALTER TABLE public.parlor_settings ENABLE ROW LEVEL SECURITY;
+
+-- NEW: Mock Admin Policy: Full access to parlor_settings
+CREATE POLICY "Mock Admin: Full access to parlor_settings"
+ON public.parlor_settings FOR ALL
+USING (public.is_mock_admin())
+WITH CHECK (public.is_mock_admin());
 
 -- Everyone can view settings
 CREATE POLICY "Settings are viewable by everyone"
