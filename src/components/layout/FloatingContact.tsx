@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Phone, MessageCircle, Mail, Plus, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Phone, MessageCircle, Calendar, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const FloatingContact = () => {
@@ -7,16 +8,25 @@ const FloatingContact = () => {
 
   const contactOptions = [
     {
+      icon: Calendar,
+      label: "Book Appointment",
+      href: "/contact",
+      className: "bg-primary hover:bg-primary/90",
+      isInternal: true,
+    },
+    {
       icon: Phone,
       label: "Call",
       href: "tel:+918799132161",
       className: "bg-green-500 hover:bg-green-600",
+      isInternal: false,
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
       href: "https://wa.me/918799132161",
       className: "bg-green-600 hover:bg-green-700",
+      isInternal: false,
     },
   ];
 
@@ -25,18 +35,30 @@ const FloatingContact = () => {
       {/* Contact Options */}
       {isOpen && (
         <div className="flex flex-col space-y-3 mb-4 animate-fade-in-up">
-          {contactOptions.map((option, index) => (
-            <a
-              key={index}
-              href={option.href}
-              target={option.href.startsWith('http') ? '_blank' : undefined}
-              rel={option.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${option.className}`}
-            >
-              <option.icon className="h-5 w-5" />
-              <span className="font-medium">{option.label}</span>
-            </a>
-          ))}
+          {contactOptions.map((option, index) => 
+            option.isInternal ? (
+              <Link
+                key={index}
+                to={option.href}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${option.className}`}
+              >
+                <option.icon className="h-5 w-5" />
+                <span className="font-medium">{option.label}</span>
+              </Link>
+            ) : (
+              <a
+                key={index}
+                href={option.href}
+                target={option.href.startsWith('http') ? '_blank' : undefined}
+                rel={option.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${option.className}`}
+              >
+                <option.icon className="h-5 w-5" />
+                <span className="font-medium">{option.label}</span>
+              </a>
+            )
+          )}
         </div>
       )}
 
