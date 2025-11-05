@@ -99,36 +99,20 @@ const Contact = () => {
     }
 
     try {
-      // Parse the date to separate date and time
-      const appointmentDate = new Date(formData.date);
-      const dateStr = appointmentDate.toISOString().split('T')[0];
-      const timeStr = '10:00:00'; // Default time, can be made dynamic
-
-      // Insert appointment
-      const { error } = await supabase
-        .from('appointments')
-        .insert({
-          client_name: formData.name,
-          client_email: formData.email || '',
-          client_phone: formData.phone,
-          service_name: formData.service,
-          appointment_date: dateStr,
-          appointment_time: timeStr,
-          notes: formData.message,
-          status: 'pending'
-        });
+      // Send to Google Sheets
+      const { error } = await supabase.functions.invoke('submit-to-sheets', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: formData.service,
+          date: formData.date,
+          message: formData.message
+        }
+      });
 
       if (error) {
-        if (error.code === '23505') {
-          toast({
-            title: "Time Slot Unavailable",
-            description: "This time slot is already booked. Please choose another time.",
-            variant: "destructive"
-          });
-        } else {
-          throw error;
-        }
-        return;
+        throw error;
       }
 
       toast({
