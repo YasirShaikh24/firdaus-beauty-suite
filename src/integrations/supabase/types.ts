@@ -14,24 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_users: {
+      about_content: {
         Row: {
           created_at: string | null
+          description: string | null
           id: string
-          password_hash: string
-          username: string
+          image_url: string | null
+          section_key: string
+          stats_label: string | null
+          stats_value: string | null
+          title: string | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: string
-          password_hash: string
-          username: string
+          image_url?: string | null
+          section_key: string
+          stats_label?: string | null
+          stats_value?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: string
-          password_hash?: string
-          username?: string
+          image_url?: string | null
+          section_key?: string
+          stats_label?: string | null
+          stats_value?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -139,6 +154,48 @@ export type Database = {
           id?: string
           image_url?: string
           title?: string
+        }
+        Relationships: []
+      }
+      home_content: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          order_index: number | null
+          section_key: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          order_index?: number | null
+          section_key: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          order_index?: number | null
+          section_key?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

@@ -46,9 +46,6 @@ const Header = () => {
             <Button variant="hero" size="sm" asChild>
               <Link to="/contact">Book Now</Link>
             </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/admin-login">Admin</Link>
-            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -77,11 +74,8 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t">
-                <Button variant="hero" size="sm" asChild>
+                <Button variant="hero" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
                   <Link to="/contact">Book Appointment</Link>
-                </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/admin-login">Admin</Link>
                 </Button>
               </div>
             </nav>
