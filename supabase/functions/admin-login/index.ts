@@ -1,7 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.207.0/http/server.ts" // UPDATED DENO STD
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3' // UPDATED SUPABASE JS
 
 const corsHeaders = {
+// ... rest of the function remains the same
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
@@ -16,9 +17,9 @@ serve(async (req) => {
 
     console.log('Admin login attempt for username:', username)
 
-    // Hardcoded admin credentials (secure approach would use database with hashed passwords)
-    const ADMIN_USERNAME = 'firdaussindhi'
-    const ADMIN_PASSWORD = 'javed123'
+    // Secure approach: Use Supabase Secrets for admin credentials
+    const ADMIN_USERNAME = Deno.env.get('ADMIN_USERNAME')
+    const ADMIN_PASSWORD = Deno.env.get('ADMIN_PASSWORD')
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       // Create a Supabase admin client
@@ -27,7 +28,6 @@ serve(async (req) => {
       const supabase = createClient(supabaseUrl, supabaseKey)
 
       // Create or get an admin user session
-      // For simplicity, we'll create a guest session
       const { data, error } = await supabase.auth.signInAnonymously()
 
       if (error) {
@@ -35,7 +35,21 @@ serve(async (req) => {
         throw error
       }
 
-      console.log('Admin login successful')
+      // CRITICAL STEP: Assign the 'admin' role to this session's user
+      if (data.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: data.user.id, role: 'admin' })
+          .select()
+        
+        // Ignore unique constraint error (23505) if the role is already set
+        if (roleError && roleError.code !== '23505') { 
+          console.error('Error setting admin role:', roleError);
+          throw roleError;
+        }
+      }
+
+      console.log('Admin login successful and role assigned')
 
       return new Response(
         JSON.stringify({

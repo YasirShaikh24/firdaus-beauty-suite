@@ -36,7 +36,7 @@ CREATE POLICY "Admins can manage roles"
 ON public.user_roles FOR ALL
 USING (public.has_role(auth.uid(), 'admin'));
 
--- Create home page content table
+-- Create home page content table (and other tables from that migration)
 CREATE TABLE public.home_content (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     section_key TEXT UNIQUE NOT NULL,
