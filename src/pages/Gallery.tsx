@@ -3,6 +3,7 @@ import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import heroGallery from "@/assets/hero-gallery.jpg";
+import { AspectRatio } from "@/components/ui/aspect-ratio"; // ADDED IMPORT
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -18,6 +19,33 @@ const Gallery = () => {
 
   // Sample gallery images (in a real app, these would come from an API/database)
   const galleryImages = [
+    // ====================================================================
+    // 🌟 YOUR NEW GALLERY ENTRIES (Paths Corrected to .png.png) 🌟
+    // ====================================================================
+    {
+      id: 101,
+      src: "/gallery/image1.png.png", // PATH FIX
+      alt: "Bridal Portfolio Piece 1",
+      category: "bridal",
+      title: "Elegant Bridal Look"
+    },
+    {
+      id: 102, 
+      src: "/gallery/image2.png.png", // PATH FIX
+      alt: "Party Portfolio Piece 2",
+      category: "party",
+      title: "Glamorous Party Look"
+    },
+    {
+      id: 103, 
+      src: "/gallery/image3.png.png", // PATH FIX
+      alt: "Traditional Portfolio Piece 3",
+      category: "traditional",
+      title: "Traditional Bridal Style"
+    },
+    // ====================================================================
+
+    // Existing Placeholder Images (keep or remove them as you add your own)
     {
       id: 1,
       src: "/api/placeholder/400/500",
@@ -161,11 +189,16 @@ const Gallery = () => {
               onClick={() => setSelectedImage(image.src)}
             >
               <div className="relative overflow-hidden rounded-lg shadow-card hover:shadow-elegant transition-all duration-300">
-                <img 
-                  src={image.src} 
-                  alt={image.alt}
-                  className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                />
+                {/* FIX: AspectRatio wrapper ensures uniform image size/shape */}
+                <AspectRatio ratio={3 / 4} className="bg-muted">
+                  <img 
+                    src={image.src} 
+                    alt={image.alt}
+                    // FIX: object-cover ensures the image fills the container without stretching
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </AspectRatio>
+                
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center text-white">
                     <Eye className="h-8 w-8 mx-auto mb-2" />

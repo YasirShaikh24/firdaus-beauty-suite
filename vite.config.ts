@@ -1,66 +1,54 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path'; // <--- Import 'path' module
+
+// Define your PWA manifest configuration for Firdaus Makeover
+const manifestForPlugin = {
+  registerType: 'autoUpdate',
+  includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+  manifest: {
+    name: "Firdaus Makeover",
+    short_name: "F. Makeover",
+    description: "Where Beauty Meets Elegance. Makeup and Salon Services.",
+    icons: [
+      {
+        src: 'pwa-192x192.png',
+        sizes: '192x192',
+        type: 'image/png'
+      },
+      {
+        src: 'pwa-512x512.png',
+        sizes: '512x512',
+        type: 'image/png'
+      },
+      {
+        src: 'maskable-icon-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable'
+      }
+    ],
+    theme_color: '#984B8E', // Based on primary color from src/index.css
+    background_color: '#FAF6F6', // Based on background color from src/index.css
+    display: "standalone",
+    scope: '/',
+    start_url: "/",
+    orientation: 'portrait'
+  }
+};
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
+export default defineConfig({
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon-32x32.png', 'icon-192x192.png', 'icon-512x512.png'],
-      manifest: {
-        name: 'Firdaus Makeover',
-        short_name: 'Firdaus',
-        description: 'Premium Beauty Parlor - Where Beauty Meets Elegance',
-        theme_color: '#f7d9e3',
-        background_color: '#ffffff',
-        display: 'standalone',
-        scope: '/',
-        start_url: '/',
-        orientation: 'portrait-primary',
-        icons: [
-          {
-            src: '/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'maskable any'
-          },
-          {
-            src: '/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable any'
-          },
-          {
-            src: '/favicon-32x32.png',
-            sizes: '32x32',
-            type: 'image/png'
-          }
-        ],
-        categories: ['beauty', 'lifestyle', 'shopping'],
-        shortcuts: [
-          {
-            name: 'Book Appointment',
-            short_name: 'Book',
-            description: 'Book your beauty appointment',
-            url: '/contact',
-            icons: [{ src: '/icon-192x192.png', sizes: '192x192' }]
-          }
-        ]
-      }
-    })
-  ].filter(Boolean),
+    // Include VitePWA to fix the previous issue (if not already installed, install it: npm install vite-plugin-pwa -D)
+    VitePWA(manifestForPlugin) 
+  ],
   resolve: {
+    // THIS SECTION FIXES THE ALIAS RESOLUTION ERROR
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'), // Maps '@/' to the 'src' directory
     },
   },
-}));
+});

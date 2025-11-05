@@ -1,4 +1,4 @@
--- Create appointments table
+-- SQL to create the missing 'appointments' table
 CREATE TABLE public.appointments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   client_name TEXT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE public.appointments (
   UNIQUE(appointment_date, appointment_time)
 );
 
--- Enable RLS
+-- Enable RLS (needed for the next policy)
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 
 -- Allow anyone to insert appointments (for booking)
@@ -43,6 +43,7 @@ FOR DELETE
 USING (true);
 
 -- Add trigger for automatic timestamp updates
+-- NOTE: This requires the update_updated_at_column() function from an earlier migration
 CREATE TRIGGER update_appointments_updated_at
 BEFORE UPDATE ON public.appointments
 FOR EACH ROW

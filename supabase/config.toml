@@ -1,0 +1,7 @@
+project_id = "lhilhyjwwrfdajztjgbr"
+
+[functions.admin-login]
+verify_jwt = false
+
+[functions.submit-to-sheets]
+verify_jwt = false # Allows public access for the contact form

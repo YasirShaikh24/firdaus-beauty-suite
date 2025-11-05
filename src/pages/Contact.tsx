@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { TablesInsert } from "@/integrations/supabase/types";
 import heroContact from "@/assets/hero-contact.jpg";
 
 const Contact = () => {
@@ -20,6 +21,7 @@ const Contact = () => {
     date: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const contactInfo = [
     {
@@ -87,6 +89,7 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     // Basic validation
     if (!formData.name || !formData.phone || !formData.service || !formData.date) {
@@ -95,12 +98,47 @@ const Contact = () => {
         description: "Name, phone, service, and date are required.",
         variant: "destructive"
       });
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      // Send to Google Sheets
-      const { error } = await supabase.functions.invoke('submit-to-sheets', {
+      // Split date into date and time (assuming date input handles the date, and we'll use a default time)
+      const [appointment_date, default_time] = formData.date.split('T'); 
+      const appointment_time = default_time || '10:00:00'; // Default to 10 AM if time part is missing
+
+      // 1. Insert data into the 'appointments' table
+      const appointmentData: TablesInsert<"appointments"> = {
+        client_name: formData.name,
+        client_email: formData.email,
+        client_phone: formData.phone,
+        service_name: formData.service,
+        appointment_date: appointment_date,
+        appointment_time: appointment_time, 
+        notes: formData.message,
+        status: 'pending' 
+      };
+
+      const { error: dbError } = await supabase
+        .from('appointments')
+        .insert([appointmentData]);
+
+      if (dbError) {
+        console.error("Supabase DB Insert Error:", dbError);
+        
+        // --- FIX FOR DUPLICATE KEY ERROR (23505) ---
+        // This handles the unique constraint violation for date and time.
+        if (dbError.code === '23505') {
+            throw new Error("This time slot is already booked. Please choose a different date or time.");
+        }
+        // ------------------------------------------
+        
+        // Handle all other database errors (like RLS, connection, etc.)
+        throw new Error(`Database Error: ${dbError.message}`); 
+      }
+
+      // 2. Invoke the Edge Function to get the WhatsApp URL
+      const { data, error: functionError } = await supabase.functions.invoke('submit-to-sheets', {
         body: {
           name: formData.name,
           email: formData.email,
@@ -111,31 +149,50 @@ const Contact = () => {
         }
       });
 
-      if (error) {
-        throw error;
+      if (functionError) {
+        console.error("Supabase Function Error:", functionError); 
+        throw functionError;
+      }
+      
+      if (data && typeof data === 'object' && 'whatsappUrl' in data) {
+        
+        const whatsappUrl = (data as { whatsappUrl: string }).whatsappUrl;
+
+        // 3. Show success toast 
+        toast({
+          title: "Booking Request Sent!",
+          description: "Your appointment is saved. We're redirecting you to WhatsApp for quick confirmation!",
+        });
+
+        // 4. Redirect the user to WhatsApp to open the pre-filled message
+        setTimeout(() => {
+            window.open(whatsappUrl, '_blank');
+        }, 500);
+        
+        // 5. Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          date: "",
+          message: ""
+        });
+
+      } else {
+        console.error("Function returned unexpected data structure:", data);
+        throw new Error("Could not get a valid WhatsApp URL from the server.");
       }
 
-      toast({
-        title: "Booking Request Sent!",
-        description: "We'll contact you within 2 hours to confirm your appointment.",
-      });
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        service: "",
-        date: "",
-        message: ""
-      });
     } catch (error) {
-      console.error('Appointment booking error:', error);
+      console.error('Appointment booking error caught in client:', error);
       toast({
         title: "Booking Failed",
-        description: "There was an error submitting your booking. Please try again.",
+        description: `There was an error submitting your booking: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -197,7 +254,7 @@ const Contact = () => {
                 Book Your Appointment
               </CardTitle>
               <CardDescription>
-                Fill out the form below and we'll get back to you within 2 hours
+                Fill out the form below and we'll save your details and open a WhatsApp chat for quick confirmation.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -213,6 +270,7 @@ const Contact = () => {
                         value={formData.name}
                         onChange={(e) => handleInputChange("name", e.target.value)}
                         className="pl-10"
+                        required
                       />
                     </div>
                   </div>
@@ -228,6 +286,7 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
                         className="pl-10"
+                        required
                       />
                     </div>
                   </div>
@@ -266,12 +325,13 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="date">Preferred Date</Label>
+                    <Label htmlFor="date">Preferred Date & Time *</Label>
                     <Input
                       id="date"
-                      type="date"
+                      type="datetime-local" // Changed to datetime-local for better data granularity
                       value={formData.date}
                       onChange={(e) => handleInputChange("date", e.target.value)}
+                      required
                     />
                   </div>
                 </div>
@@ -287,13 +347,17 @@ const Contact = () => {
                   />
                 </div>
 
-                <Button type="submit" variant="hero" size="lg" className="w-full">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Booking Request
+                <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending...' : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Booking Request via WhatsApp
+                    </>
+                  )}
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center">
-                  * Required fields. We'll contact you within 2 hours to confirm your appointment.
+                  * Required fields. After submission, your request is saved, and a WhatsApp chat will open for confirmation.
                 </p>
               </form>
             </CardContent>
