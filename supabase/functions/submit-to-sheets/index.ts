@@ -11,16 +11,19 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, phone, service, date, message } = await req.json()
-    
-    console.log('Received appointment:', { name, email, phone, service, date })
-
-    // Get Google Apps Script webhook URL from environment
+    const formData = await req.json()
     const webhookUrl = Deno.env.get('GOOGLE_SHEETS_WEBHOOK_URL')
-    
+
     if (!webhookUrl) {
-      throw new Error('Google Sheets webhook URL not configured')
+      console.error('GOOGLE_SHEETS_WEBHOOK_URL not configured')
+      throw new Error('Google Sheets webhook not configured')
     }
+
+    console.log('Submitting appointment to Google Sheets:', {
+      name: formData.name,
+      service: formData.service,
+      date: formData.date
+    })
 
     // Send data to Google Sheets via webhook
     const response = await fetch(webhookUrl, {
@@ -29,26 +32,31 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name,
-        email,
-        phone,
-        service,
-        date,
-        message,
-        timestamp: new Date().toISOString()
-      })
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        date: formData.date,
+        message: formData.message,
+        timestamp: formData.timestamp || new Date().toISOString()
+      }),
     })
 
+    const responseText = await response.text()
+    console.log('Google Sheets response:', responseText)
+
     if (!response.ok) {
-      console.error('Google Sheets webhook failed:', await response.text())
-      throw new Error('Failed to submit to Google Sheets')
+      throw new Error(`Failed to submit to Google Sheets: ${response.statusText}`)
     }
 
     console.log('Successfully submitted to Google Sheets')
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Appointment submitted to Google Sheets' }),
-      { 
+      JSON.stringify({
+        success: true,
+        message: 'Appointment submitted successfully'
+      }),
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
@@ -56,11 +64,11 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in submit-to-sheets:', error)
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      JSON.stringify({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to submit appointment'
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       },
