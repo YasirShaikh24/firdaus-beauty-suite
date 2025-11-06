@@ -137,52 +137,39 @@ const Contact = () => {
         throw new Error(`Database Error: ${dbError.message}`); 
       }
 
-      // 2. Invoke the Edge Function to get the WhatsApp URL
-      const { data, error: functionError } = await supabase.functions.invoke('submit-to-sheets', {
-        body: {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          service: formData.service,
-          date: formData.date,
-          message: formData.message
-        }
+      // 2. Generate WhatsApp URL with formatted message
+      const message = `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
+        `*Name:* ${formData.name}\n` +
+        `*Service:* ${formData.service}\n` +
+        `*Date:* ${formData.date}\n` +
+        `*Phone:* ${formData.phone}\n` +
+        `*Email:* ${formData.email || 'N/A'}\n` +
+        `*Notes:* ${formData.message || 'None'}\n\n` +
+        `Please contact the client ASAP to confirm the booking.`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/918799132161?text=${encodedMessage}`;
+
+      // 3. Show success toast 
+      toast({
+        title: "Booking Request Sent!",
+        description: "Your appointment is saved. We're redirecting you to WhatsApp for quick confirmation!",
       });
 
-      if (functionError) {
-        console.error("Supabase Function Error:", functionError); 
-        throw functionError;
-      }
+      // 4. Redirect the user to WhatsApp to open the pre-filled message
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 500);
       
-      if (data && typeof data === 'object' && 'whatsappUrl' in data) {
-        
-        const whatsappUrl = (data as { whatsappUrl: string }).whatsappUrl;
-
-        // 3. Show success toast 
-        toast({
-          title: "Booking Request Sent!",
-          description: "Your appointment is saved. We're redirecting you to WhatsApp for quick confirmation!",
-        });
-
-        // 4. Redirect the user to WhatsApp to open the pre-filled message
-        setTimeout(() => {
-            window.open(whatsappUrl, '_blank');
-        }, 500);
-        
-        // 5. Reset form
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          service: "",
-          date: "",
-          message: ""
-        });
-
-      } else {
-        console.error("Function returned unexpected data structure:", data);
-        throw new Error("Could not get a valid WhatsApp URL from the server.");
-      }
+      // 5. Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        date: "",
+        message: ""
+      });
 
     } catch (error) {
       console.error('Appointment booking error caught in client:', error);
