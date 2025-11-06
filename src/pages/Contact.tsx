@@ -138,10 +138,24 @@ const Contact = () => {
       }
 
       // 2. Generate WhatsApp URL with formatted message
+      // Format date and time separately for clarity
+      const dateObj = new Date(formData.date);
+      const formattedDate = dateObj.toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+      const formattedTime = dateObj.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+      });
+
       const message = `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
         `*Name:* ${formData.name}\n` +
         `*Service:* ${formData.service}\n` +
-        `*Date:* ${formData.date}\n` +
+        `*Date:* ${formattedDate}\n` +
+        `*Time:* ${formattedTime}\n` +
         `*Phone:* ${formData.phone}\n` +
         `*Email:* ${formData.email || 'N/A'}\n` +
         `*Notes:* ${formData.message || 'None'}\n\n` +
