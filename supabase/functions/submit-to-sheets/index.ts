@@ -6,7 +6,7 @@ const corsHeaders = {
 }
 
 // Define the target WhatsApp number (the mobile number that receives the booking message)
-const TARGET_WHATSAPP_NUMBER = "918799132161"; 
+const TARGET_WHATSAPP_NUMBER = "918799132161";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

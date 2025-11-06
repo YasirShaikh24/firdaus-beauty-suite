@@ -5,7 +5,7 @@ import path from 'path'; // <--- Import 'path' module
 
 // Define your PWA manifest configuration for Firdaus Makeover
 const manifestForPlugin = {
-  registerType: 'autoUpdate',
+  registerType: 'autoUpdate' as const,
   includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
   manifest: {
     name: "Firdaus Makeover",
@@ -31,15 +31,18 @@ const manifestForPlugin = {
     ],
     theme_color: '#984B8E', // Based on primary color from src/index.css
     background_color: '#FAF6F6', // Based on background color from src/index.css
-    display: "standalone",
+    display: "standalone" as const,
     scope: '/',
     start_url: "/",
-    orientation: 'portrait'
+    orientation: 'portrait' as const
   }
 };
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 8080
+  },
   plugins: [
     react(),
     // Include VitePWA to fix the previous issue (if not already installed, install it: npm install vite-plugin-pwa -D)
