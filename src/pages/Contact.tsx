@@ -138,18 +138,22 @@ const Contact = () => {
       }
 
       // 2. Generate WhatsApp URL with formatted message
-      // Format date and time separately for clarity
-      const dateObj = new Date(formData.date);
-      const formattedDate = dateObj.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      });
-      const formattedTime = dateObj.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
+      // Extract date and time from the datetime-local input value
+      // formData.date format: "YYYY-MM-DDTHH:MM"
+      const [datePart, timePart] = formData.date.split('T');
+      const [year, month, day] = datePart.split('-');
+      const [hours, minutes] = timePart.split(':');
+      
+      // Format date as "6 December 2025"
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+      const formattedDate = `${parseInt(day)} ${monthNames[parseInt(month) - 1]} ${year}`;
+      
+      // Format time as "9:54 PM"
+      const hour24 = parseInt(hours);
+      const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+      const ampm = hour24 >= 12 ? 'PM' : 'AM';
+      const formattedTime = `${hour12}:${minutes} ${ampm}`;
 
       const message = `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
         `*Name:* ${formData.name}\n` +
