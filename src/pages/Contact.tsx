@@ -356,7 +356,7 @@ const Contact = () => {
                   {isSubmitting ? 'Sending...' : (
                     <>
                       <Send className="h-4 w-4 mr-2" />
-                      Send Booking Request (WhatsApp)
+                      Send Booking Request
                     </>
                   )}
                 </Button>
