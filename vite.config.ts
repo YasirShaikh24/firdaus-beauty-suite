@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
-import path from 'path'; // <--- Import 'path' module
+import path from 'path';
+import { componentTagger } from "lovable-tagger";
 
 // Define your PWA manifest configuration for Firdaus Makeover
 const manifestForPlugin = {
@@ -39,19 +40,19 @@ const manifestForPlugin = {
 };
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
+    host: "::",
     port: 8080
   },
   plugins: [
     react(),
-    // Include VitePWA to fix the previous issue (if not already installed, install it: npm install vite-plugin-pwa -D)
-    VitePWA(manifestForPlugin) 
-  ],
+    VitePWA(manifestForPlugin),
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
   resolve: {
-    // THIS SECTION FIXES THE ALIAS RESOLUTION ERROR
     alias: {
-      '@': path.resolve(__dirname, './src'), // Maps '@/' to the 'src' directory
+      '@': path.resolve(__dirname, './src'),
     },
   },
-});
+}));
