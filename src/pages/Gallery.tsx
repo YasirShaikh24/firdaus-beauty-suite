@@ -3,7 +3,7 @@ import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import heroGallery from "@/assets/hero-gallery.jpg";
-import { AspectRatio } from "@/components/ui/aspect-ratio"; // ADDED IMPORT
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -13,123 +13,28 @@ const Gallery = () => {
     { id: "all", name: "All" },
     { id: "bridal", name: "Bridal" },
     { id: "party", name: "Party" },
-    { id: "hair", name: "Hair Styling" },
-    { id: "traditional", name: "Traditional" }
+    { id: "hairstyling", name: "Hair Styling" },
   ];
 
-  // Sample gallery images (in a real app, these would come from an API/database)
+  // Gallery images - Simply add images with these naming patterns to public/gallery/:
+  // bridal1.png, bridal2.png, bridal3.png...
+  // party1.png, party2.png, party3.png...
+  // hairstyling1.png, hairstyling2.png, hairstyling3.png...
   const galleryImages = [
-    // ====================================================================
-    // 🌟 YOUR NEW GALLERY ENTRIES (Paths Corrected to .png.png) 🌟
-    // ====================================================================
-    {
-      id: 101,
-      src: "/gallery/image1.png.png", // PATH FIX
-      alt: "Bridal Portfolio Piece 1",
-      category: "bridal",
-      title: "Elegant Bridal Look"
-    },
-    {
-      id: 102, 
-      src: "/gallery/image2.png.png", // PATH FIX
-      alt: "Party Portfolio Piece 2",
-      category: "party",
-      title: "Glamorous Party Look"
-    },
-    {
-      id: 103, 
-      src: "/gallery/image3.png.png", // PATH FIX
-      alt: "Traditional Portfolio Piece 3",
-      category: "traditional",
-      title: "Traditional Bridal Style"
-    },
-    // ====================================================================
-
-    // Existing Placeholder Images (keep or remove them as you add your own)
-    {
-      id: 1,
-      src: "/api/placeholder/400/500",
-      alt: "Bridal Makeup 1",
-      category: "bridal",
-      title: "Traditional Bridal Look"
-    },
-    {
-      id: 2,
-      src: "/api/placeholder/400/600",
-      alt: "Party Makeup 1",
-      category: "party",
-      title: "Glamorous Evening Look"
-    },
-    {
-      id: 3,
-      src: "/api/placeholder/400/450",
-      alt: "Hair Styling 1",
-      category: "hair",
-      title: "Elegant Hair Styling"
-    },
-    {
-      id: 4,
-      src: "/api/placeholder/400/550",
-      alt: "Traditional Look 1",
-      category: "traditional",
-      title: "Traditional Indian Bride"
-    },
-    {
-      id: 5,
-      src: "/api/placeholder/400/480",
-      alt: "Bridal Makeup 2",
-      category: "bridal",
-      title: "Modern Bridal Makeup"
-    },
-    {
-      id: 6,
-      src: "/api/placeholder/400/520",
-      alt: "Party Makeup 2",
-      category: "party",
-      title: "Cocktail Party Look"
-    },
-    {
-      id: 7,
-      src: "/api/placeholder/400/580",
-      alt: "Hair Styling 2",
-      category: "hair",
-      title: "Bridal Hair Styling"
-    },
-    {
-      id: 8,
-      src: "/api/placeholder/400/460",
-      alt: "Traditional Look 2",
-      category: "traditional",
-      title: "South Indian Bride"
-    },
-    {
-      id: 9,
-      src: "/api/placeholder/400/540",
-      alt: "Bridal Makeup 3",
-      category: "bridal",
-      title: "Reception Makeup"
-    },
-    {
-      id: 10,
-      src: "/api/placeholder/400/490",
-      alt: "Party Makeup 3",
-      category: "party",
-      title: "Birthday Party Glam"
-    },
-    {
-      id: 11,
-      src: "/api/placeholder/400/560",
-      alt: "Hair Styling 3",
-      category: "hair",
-      title: "Vintage Hair Style"
-    },
-    {
-      id: 12,
-      src: "/api/placeholder/400/470",
-      alt: "Traditional Look 3",
-      category: "traditional",
-      title: "Bengali Bride"
-    }
+    // Bridal images
+    { id: 1, src: "/gallery/bridal1.png", alt: "Bridal Makeup 1", category: "bridal", title: "Traditional Bridal Look" },
+    { id: 2, src: "/gallery/bridal2.png", alt: "Bridal Makeup 2", category: "bridal", title: "Modern Bridal Makeup" },
+    { id: 3, src: "/gallery/bridal3.png", alt: "Bridal Makeup 3", category: "bridal", title: "Reception Makeup" },
+    
+    // Party images
+    { id: 4, src: "/gallery/party1.png", alt: "Party Makeup 1", category: "party", title: "Glamorous Evening Look" },
+    { id: 5, src: "/gallery/party2.png", alt: "Party Makeup 2", category: "party", title: "Cocktail Party Look" },
+    { id: 6, src: "/gallery/party3.png", alt: "Party Makeup 3", category: "party", title: "Birthday Party Glam" },
+    
+    // Hair Styling images
+    { id: 7, src: "/gallery/hairstyling1.png", alt: "Hair Styling 1", category: "hairstyling", title: "Elegant Hair Styling" },
+    { id: 8, src: "/gallery/hairstyling2.png", alt: "Hair Styling 2", category: "hairstyling", title: "Bridal Hair Styling" },
+    { id: 9, src: "/gallery/hairstyling3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
   ];
 
   const filteredImages = activeFilter === "all" 
@@ -189,13 +94,15 @@ const Gallery = () => {
               onClick={() => setSelectedImage(image.src)}
             >
               <div className="relative overflow-hidden rounded-lg shadow-card hover:shadow-elegant transition-all duration-300">
-                {/* FIX: AspectRatio wrapper ensures uniform image size/shape */}
                 <AspectRatio ratio={3 / 4} className="bg-muted">
                   <img 
                     src={image.src} 
                     alt={image.alt}
-                    // FIX: object-cover ensures the image fills the container without stretching
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      // Fallback if image doesn't exist
+                      e.currentTarget.src = '/api/placeholder/400/500';
+                    }}
                   />
                 </AspectRatio>
                 
@@ -208,13 +115,6 @@ const Gallery = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Load More */}
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
-            Load More Images
-          </Button>
         </div>
       </section>
 

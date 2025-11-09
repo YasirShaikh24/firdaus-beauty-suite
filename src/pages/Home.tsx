@@ -88,8 +88,8 @@ const Home = () => {
                   Book Appointment <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild className="text-white border-white hover:bg-white hover:text-black">
-                <Link to="/services">View Services</Link>
+              <Button variant="outline" size="lg" asChild className="text-black bg-white border-white hover:bg-gray-100">
+                <Link to="/gallery">View Portfolio</Link>
               </Button>
             </div>
           </div>
@@ -115,44 +115,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Services */}
-      <section className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Our Services</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover our range of premium beauty services designed to enhance your natural beauty
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="overflow-hidden hover:shadow-elegant transition-all duration-300 hover:-translate-y-2">
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20" />
-              <CardHeader>
-                <CardTitle className="font-playfair text-xl">{service.name}</CardTitle>
-                <CardDescription>{service.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-2xl font-bold text-primary">{service.price}</span>
-                  <span className="text-muted-foreground">{service.duration}</span>
-                </div>
-                <Button className="w-full" variant="premium">
-                  Book Now
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" asChild>
-            <Link to="/services">
-              View All Services <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </section>
 
       {/* About Preview */}
       <section className="bg-card py-16">
@@ -191,11 +153,8 @@ const Home = () => {
           {testimonials.map((testimonial, index) => (
             <Card key={index} className="border-0 shadow-card gradient-card">
               <CardHeader className="text-center">
-                <div className="mx-auto mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full" />
-                </div>
-                <CardTitle className="text-lg">{testimonial.name}</CardTitle>
-                <div className="flex justify-center space-x-1">
+                <CardTitle className="text-lg mb-2">{testimonial.name}</CardTitle>
+                <div className="flex justify-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                   ))}
@@ -218,7 +177,7 @@ const Home = () => {
           <p className="text-xl mb-8 text-gray-200 max-w-2xl mx-auto">
             Book your appointment today and let us make you look and feel absolutely gorgeous
           </p>
-          <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-primary" asChild>
+          <Button variant="outline" size="lg" className="text-black bg-white border-white hover:bg-gray-100" asChild>
             <Link to="/contact">Book Your Session Now</Link>
           </Button>
         </div>

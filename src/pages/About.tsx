@@ -1,9 +1,9 @@
 import { Award, Users, Clock, Heart, Star, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import heroAbout from "@/assets/hero-about.jpg";
+import trophyImage from "@/assets/trophy-award.jpg";
 
 const About = () => {
   const stats = [
@@ -78,7 +78,7 @@ const About = () => {
         <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">About Firdaus Makeover</h1>
           <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
-            Where Beauty Meets Elegance - Your Trusted Beauty Destination Since 2019
+            Where Beauty Meets Elegance - Your Trusted Beauty Destination
           </p>
         </div>
       </section>
@@ -91,24 +91,28 @@ const About = () => {
             <div className="space-y-6 text-lg text-muted-foreground">
               <p>
                 Firdaus Makeover was born from a simple belief: every woman deserves to feel beautiful and confident. 
-                Founded in 2019 by Firdaus Khan, a passionate makeup artist with a vision to transform lives through beauty.
+                Founded by Firdaus Khan, a passionate and award-winning makeup artist with a vision to transform lives through beauty.
               </p>
               <p>
                 What started as a small home-based service has grown into one of the city's most trusted beauty destinations. 
                 We've had the privilege of being part of over 500 special moments, from intimate engagements to grand weddings.
               </p>
               <p>
-                Our journey has been built on trust, excellence, and an unwavering commitment to making every client look 
-                and feel their absolute best. We don't just apply makeup; we create transformations that boost confidence 
-                and create lasting memories.
+                Recognized for excellence in the beauty industry, Firdaus Makeover was honored with the "Best Makeover Artist" award, 
+                a testament to our dedication, artistry, and commitment to perfection. This achievement reflects our unwavering passion 
+                for making every client look and feel their absolute best.
+              </p>
+              <p>
+                We don't just apply makeup; we create transformations that boost confidence and create lasting memories.
               </p>
             </div>
           </div>
           <div className="relative">
-            <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg" />
-            <Badge className="absolute -top-4 -right-4 gradient-hero text-white px-4 py-2">
-              Since 2019
-            </Badge>
+            <img 
+              src={trophyImage} 
+              alt="Best Makeover Artist Award" 
+              className="w-full h-full object-cover rounded-lg shadow-elegant"
+            />
           </div>
         </div>
       </section>
@@ -169,46 +173,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="gradient-card py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Meet Our Team</h2>
-            <p className="text-xl text-muted-foreground">
-              Our certified and experienced beauty professionals
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <Card key={index} className="text-center border-0 bg-background shadow-elegant overflow-hidden">
-                <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20" />
-                <CardHeader>
-                  <CardTitle className="font-playfair text-xl">{member.name}</CardTitle>
-                  <p className="text-primary font-semibold">{member.role}</p>
-                  <div className="flex justify-center space-x-4 text-sm text-muted-foreground">
-                    <span>{member.experience}</span>
-                    <span>•</span>
-                    <span>{member.specialization}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="font-medium text-sm text-foreground">Certifications:</p>
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {member.certifications.map((cert, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">
-                          {cert}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="gradient-hero py-16 text-white">
@@ -217,7 +181,7 @@ const About = () => {
           <p className="text-xl mb-8 text-gray-200 max-w-2xl mx-auto">
             Join our family of satisfied clients and discover why we're the trusted choice for beauty transformations
           </p>
-          <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-primary" asChild>
+          <Button variant="outline" size="lg" className="text-black bg-white border-white hover:bg-gray-100" asChild>
             <Link to="/contact">Book Your Consultation</Link>
           </Button>
         </div>

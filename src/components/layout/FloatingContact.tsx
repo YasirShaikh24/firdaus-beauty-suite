@@ -31,7 +31,7 @@ const FloatingContact = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Contact Options */}
       {isOpen && (
         <div className="flex flex-col space-y-3 mb-4 animate-fade-in-up">

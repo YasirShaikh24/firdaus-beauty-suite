@@ -26,9 +26,9 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Visit Our Salon",
-      details: ["123 Beauty Street", "Fashion District", "City - 400001"],
-      action: "Get Directions"
+      title: "Location",
+      details: ["I offer on-location makeup services and travel to clients' homes, studios, and event venues."],
+      action: "Contact Us"
     },
     {
       icon: Phone,
