@@ -7,8 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { TablesInsert } from "@/integrations/supabase/types";
 import heroContact from "@/assets/hero-contact.jpg";
 
 const Contact = () => {
@@ -19,6 +17,7 @@ const Contact = () => {
     phone: "",
     service: "",
     date: "",
+    time: "",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,10 +91,10 @@ const Contact = () => {
     setIsSubmitting(true);
     
     // Basic validation
-    if (!formData.name || !formData.phone || !formData.service || !formData.date) {
+    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
       toast({
         title: "Please fill required fields",
-        description: "Name, phone, service, and date are required.",
+        description: "Name, phone, service, date, and time are required.",
         variant: "destructive"
       });
       setIsSubmitting(false);
@@ -103,58 +102,22 @@ const Contact = () => {
     }
 
     try {
-      // Split date into date and time (assuming date input handles the date, and we'll use a default time)
-      const [appointment_date, default_time] = formData.date.split('T'); 
-      const appointment_time = default_time || '10:00:00'; // Default to 10 AM if time part is missing
-
-      // 1. Insert data into the 'appointments' table
-      const appointmentData: TablesInsert<"appointments"> = {
-        client_name: formData.name,
-        client_email: formData.email,
-        client_phone: formData.phone,
-        service_name: formData.service,
-        appointment_date: appointment_date,
-        appointment_time: appointment_time, 
-        notes: formData.message,
-        status: 'pending' 
-      };
-
-      const { error: dbError } = await supabase
-        .from('appointments')
-        .insert([appointmentData]);
-
-      if (dbError) {
-        console.error("Supabase DB Insert Error:", dbError);
-        
-        // --- FIX FOR DUPLICATE KEY ERROR (23505) ---
-        // This handles the unique constraint violation for date and time.
-        if (dbError.code === '23505') {
-            throw new Error("This time slot is already booked. Please choose a different date or time.");
-        }
-        // ------------------------------------------
-        
-        // Handle all other database errors (like RLS, connection, etc.)
-        throw new Error(`Database Error: ${dbError.message}`); 
-      }
-
-      // 2. Generate WhatsApp URL with formatted message
-      // Extract date and time from the datetime-local input value
-      // formData.date format: "YYYY-MM-DDTHH:MM"
-      const [datePart, timePart] = formData.date.split('T');
-      const [year, month, day] = datePart.split('-');
-      const [hours, minutes] = timePart.split(':');
+      // Format date from the date input (YYYY-MM-DD)
+      const [year, month, day] = formData.date.split('-');
       
       // Format date as "6 December 2025"
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
       const formattedDate = `${parseInt(day)} ${monthNames[parseInt(month) - 1]} ${year}`;
       
-      // Format time as "9:54 PM"
+      // Format time from the time input (HH:MM)
+      const [hours, minutes] = formData.time.split(':');
       const hour24 = parseInt(hours);
       const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
       const ampm = hour24 >= 12 ? 'PM' : 'AM';
       const formattedTime = `${hour12}:${minutes} ${ampm}`;
 
+      // Create WhatsApp message
       const message = `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
         `*Name:* ${formData.name}\n` +
         `*Service:* ${formData.service}\n` +
@@ -163,37 +126,38 @@ const Contact = () => {
         `*Phone:* ${formData.phone}\n` +
         `*Email:* ${formData.email || 'N/A'}\n` +
         `*Notes:* ${formData.message || 'None'}\n\n` +
-        `Please contact the client ASAP to confirm the booking.`;
+        `Please confirm this booking at your earliest convenience.`;
 
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/918799132161?text=${encodedMessage}`;
 
-      // 3. Show success toast 
+      // Show success toast 
       toast({
-        title: "Booking Request Sent!",
-        description: "Your appointment is saved. We're redirecting you to WhatsApp for quick confirmation!",
+        title: "Opening WhatsApp...",
+        description: "Your booking request is ready to send!",
       });
 
-      // 4. Redirect the user to WhatsApp to open the pre-filled message
+      // Redirect to WhatsApp
       setTimeout(() => {
         window.open(whatsappUrl, '_blank');
       }, 500);
       
-      // 5. Reset form
+      // Reset form
       setFormData({
         name: "",
         email: "",
         phone: "",
         service: "",
         date: "",
+        time: "",
         message: ""
       });
 
     } catch (error) {
-      console.error('Appointment booking error caught in client:', error);
+      console.error('Error creating WhatsApp message:', error);
       toast({
-        title: "Booking Failed",
-        description: `There was an error submitting your booking: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        title: "Something went wrong",
+        description: "Please try again or contact us directly.",
         variant: "destructive"
       });
     } finally {
@@ -259,7 +223,7 @@ const Contact = () => {
                 Book Your Appointment
               </CardTitle>
               <CardDescription>
-                Fill out the form below and we'll save your details and open a WhatsApp chat for quick confirmation.
+                Fill out the form below and we'll open a WhatsApp chat with your details ready to send.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -330,15 +294,27 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="date">Preferred Date & Time *</Label>
+                    <Label htmlFor="date">Preferred Date *</Label>
                     <Input
                       id="date"
-                      type="datetime-local" // Changed to datetime-local for better data granularity
+                      type="date"
                       value={formData.date}
                       onChange={(e) => handleInputChange("date", e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
                       required
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="time">Preferred Time *</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => handleInputChange("time", e.target.value)}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -353,16 +329,16 @@ const Contact = () => {
                 </div>
 
                 <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Sending...' : (
+                  {isSubmitting ? 'Opening WhatsApp...' : (
                     <>
                       <Send className="h-4 w-4 mr-2" />
-                      Send Booking Request
+                      Send via WhatsApp
                     </>
                   )}
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center">
-                  * Required fields. After submission, your request is saved, and a WhatsApp chat will open for confirmation.
+                  * Required fields. Click the button to open WhatsApp with your booking details ready to send.
                 </p>
               </form>
             </CardContent>
@@ -408,7 +384,7 @@ const Contact = () => {
                   <div className="text-center">
                     <MapPin className="h-12 w-12 mx-auto text-primary mb-2" />
                     <p className="text-muted-foreground">Interactive Map</p>
-                    <p className="text-sm text-muted-foreground">123 Beauty Street, Fashion District</p>
+                    <p className="text-sm text-muted-foreground">On-Location Services Available</p>
                   </div>
                 </div>
               </CardContent>
