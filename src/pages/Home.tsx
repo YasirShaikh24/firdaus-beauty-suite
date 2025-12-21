@@ -3,7 +3,7 @@ import { Star, ArrowRight, CheckCircle, Users, Award, Clock } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-bride.jpg";
-import logo from "@/assets/logo.png";
+import aboutImage from "@/assets/trophy-award.jpg";
 
 const Home = () => {
   const features = [
@@ -46,15 +46,9 @@ const Home = () => {
         
         <div className="relative container mx-auto px-4 text-center text-white">
           <div className="max-w-4xl mx-auto animate-fade-in-up">
-            {/* Logo and Brand */}
-            <div className="flex items-center justify-center gap-4 mb-6 animate-fade-in">
-              <img src={logo} alt="Firdaus Makeover Logo" className="h-16 w-16 md:h-20 md:w-20 animate-float" />
-              <div className="text-left">
-                <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold">
-                  <span className="text-primary-glow">Firdaus</span> <span className="text-foreground">Makeover</span>
-                </h1>
-              </div>
-            </div>
+            <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+              Welcome to <span className="text-primary-glow">Firdaus Makeover</span>
+            </h1>
             <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-slide-up">
               Where Beauty Meets Elegance
             </p>
@@ -115,7 +109,13 @@ const Home = () => {
                 <Link to="/about">Learn More About Us</Link>
               </Button>
             </div>
-            <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg" />
+            <div className="relative overflow-hidden rounded-lg shadow-elegant">
+              <img 
+                src={aboutImage} 
+                alt="Award-winning Makeover Artist" 
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
         </div>
       </section>
