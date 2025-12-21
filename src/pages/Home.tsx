@@ -110,10 +110,13 @@ const Home = () => {
               </Button>
             </div>
             <div className="relative overflow-hidden rounded-lg shadow-elegant">
-              <img 
-                src={aboutImage} 
-                alt="Award-winning Makeover Artist" 
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              <video 
+                src="/Makeup.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover rounded-lg"
               />
             </div>
           </div>
