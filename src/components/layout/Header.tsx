@@ -23,7 +23,7 @@ const Header = () => {
             <img src={logo} alt="Firdaus Makeover" className="h-10 w-10" />
             <div>
               <h1 className="font-playfair font-bold text-xl text-primary">FIRDAUS</h1>
-              <p className="font-playfair text-sm text-muted-foreground -mt-1">MAKEOVER</p>
+              <p className="font-playfair text-sm text-foreground font-semibold -mt-1">MAKEOVER</p>
             </div>
           </Link>
 

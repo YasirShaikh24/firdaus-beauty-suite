@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Instagram, Facebook, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Instagram, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
@@ -52,19 +52,19 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <p className="text-muted-foreground text-sm">
-                  123 Beauty Street, Fashion District, City - 400001
+                  On-location services available
                 </p>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0" />
-                <a href="tel:8799132161" className="text-muted-foreground hover:text-primary transition-colors">
-                  +91 87991 32161
+                <a href="tel:8401050169" className="text-muted-foreground hover:text-primary transition-colors">
+                  +91 84010 50169
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0" />
-                <a href="mailto:yasirazimshaikh5440@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
-                  yasirazimshaikh5440@gmail.com
+                <a href="mailto:firdauspathan47@gmail.com" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  firdauspathan47@gmail.com
                 </a>
               </div>
               <div className="flex items-start space-x-3">
@@ -81,11 +81,11 @@ const Footer = () => {
         {/* Social Media & Copyright */}
         <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex space-x-4">
-            <a href="https://www.instagram.com/yasir_shaikh_24" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
+            <a href="https://www.instagram.com/firdaus_makeover?igsh=MXJlemE0aWZoMzAxaw==" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
               <Instagram className="h-5 w-5" />
             </a>
-            <a href="#" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
-              <Facebook className="h-5 w-5" />
+            <a href="https://wa.me/918401050169" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
+              <Phone className="h-5 w-5" />
             </a>
           </div>
           <p className="text-muted-foreground text-sm">
