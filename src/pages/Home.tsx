@@ -1,34 +1,11 @@
 import { Link } from "react-router-dom";
 import { Star, ArrowRight, CheckCircle, Users, Award, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-bride.jpg";
+import aboutImage from "@/assets/trophy-award.jpg";
 
 const Home = () => {
-  const services = [
-    {
-      name: "Bridal Makeup",
-      price: "₹15,000",
-      duration: "4-5 hours",
-      description: "Complete bridal transformation with premium products",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      name: "Party Makeup",
-      price: "₹3,500",
-      duration: "2 hours",
-      description: "Glamorous looks for special occasions",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      name: "Hair Styling",
-      price: "₹2,500",
-      duration: "1.5 hours",
-      description: "Professional hair styling and treatments",
-      image: "/api/placeholder/300/200"
-    }
-  ];
-
   const features = [
     { icon: Award, title: "5+ Years Experience", description: "Trusted by 500+ brides" },
     { icon: Users, title: "Expert Team", description: "Certified makeup artists" },
@@ -41,19 +18,16 @@ const Home = () => {
       name: "Priya Sharma",
       text: "Firdaus made my wedding day absolutely perfect! The makeup was flawless and lasted all day.",
       rating: 5,
-      image: "/api/placeholder/60/60"
     },
     {
       name: "Anjali Mehta",
       text: "Amazing service for my sister's engagement. Everyone was asking about her makeup artist!",
       rating: 5,
-      image: "/api/placeholder/60/60"
     },
     {
       name: "Sneha Patel",
       text: "Professional, punctual, and absolutely talented. Highly recommended!",
       rating: 5,
-      image: "/api/placeholder/60/60"
     }
   ];
 
@@ -65,7 +39,7 @@ const Home = () => {
           <img 
             src={heroImage} 
             alt="Bridal Makeover" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover animate-scale-in"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -75,20 +49,20 @@ const Home = () => {
             <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
               Welcome to <span className="text-primary-glow">Firdaus Makeover</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-200">
+            <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-slide-up">
               Where Beauty Meets Elegance
             </p>
-            <p className="text-lg mb-12 max-w-2xl mx-auto text-gray-300">
+            <p className="text-lg mb-12 max-w-2xl mx-auto text-gray-300 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               Transform your special moments with our premium beauty services. 
               Expert bridal makeup, party looks, and beauty treatments that make you shine.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="hero" size="lg" asChild>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.4s" }}>
+              <Button variant="hero" size="lg" asChild className="hover:scale-105 transition-transform">
                 <Link to="/contact">
                   Book Appointment <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild className="text-black bg-white border-white hover:bg-gray-100">
+              <Button variant="outline" size="lg" asChild className="text-black bg-white border-white hover:bg-gray-100 hover:scale-105 transition-transform">
                 <Link to="/gallery">View Portfolio</Link>
               </Button>
             </div>
@@ -100,9 +74,9 @@ const Home = () => {
       <section className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="text-center border-0 shadow-card gradient-card">
+            <Card key={index} className="text-center border-0 shadow-card gradient-card hover:shadow-elegant hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
               <CardHeader>
-                <div className="mx-auto mb-4 p-3 rounded-full gradient-hero w-fit">
+                <div className="mx-auto mb-4 p-3 rounded-full gradient-hero w-fit animate-float">
                   <feature.icon className="h-8 w-8 text-white" />
                 </div>
                 <CardTitle className="font-playfair text-xl">{feature.title}</CardTitle>
@@ -135,7 +109,16 @@ const Home = () => {
                 <Link to="/about">Learn More About Us</Link>
               </Button>
             </div>
-            <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg" />
+            <div className="relative overflow-hidden rounded-lg shadow-elegant">
+              <video 
+                src="/Makeup.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
           </div>
         </div>
       </section>

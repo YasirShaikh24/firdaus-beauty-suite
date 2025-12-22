@@ -16,15 +16,15 @@ const FloatingContact = () => {
     },
     {
       icon: Phone,
-      label: "Call",
-      href: "tel:+918799132161",
+      label: "Call Now",
+      href: "tel:8401050169",
       className: "bg-green-500 hover:bg-green-600",
       isInternal: false,
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: "https://wa.me/918799132161",
+      href: "https://wa.me/918401050169",
       className: "bg-green-600 hover:bg-green-700",
       isInternal: false,
     },

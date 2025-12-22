@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Send, MessageCircle, User, Calendar } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Instagram, Send, MessageCircle, User, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,51 +27,55 @@ const Contact = () => {
       icon: MapPin,
       title: "Location",
       details: ["I offer on-location makeup services and travel to clients' homes, studios, and event venues."],
-      action: "Contact Us"
+      action: "Contact Us",
+      href: "/contact"
     },
     {
       icon: Phone,
       title: "Call Us",
-      details: ["+91 87991 32161", "+91 87991 32161 (WhatsApp)"],
-      action: "Call Now"
+      details: ["+91 84010 50169"],
+      action: "Call Now",
+      href: "tel:8401050169"
     },
     {
       icon: Mail,
       title: "Email Us",
-      details: ["yasirazimshaikh5440@gmail.com", "bookings@firdausmakeover.com"],
-      action: "Send Email"
+      details: ["firdauspathan47@gmail.com"],
+      action: "Email Us",
+      href: "mailto:firdauspathan47@gmail.com"
     },
     {
       icon: Clock,
       title: "Working Hours",
       details: ["Mon - Sat: 10 AM - 8 PM", "Sunday: 11 AM - 6 PM"],
-      action: "Book Now"
+      action: "Book Now",
+      href: "/contact"
     }
   ];
 
   const quickContacts = [
     {
       icon: Phone,
-      label: "Call",
-      href: "tel:+918799132161",
+      label: "Call Now",
+      href: "tel:8401050169",
       className: "bg-green-500 hover:bg-green-600"
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: "https://wa.me/918799132161",
+      href: "https://wa.me/918401050169",
       className: "bg-green-600 hover:bg-green-700"
     },
     {
       icon: Instagram,
       label: "Instagram",
-      href: "https://www.instagram.com/yasir_shaikh_24",
+      href: "https://www.instagram.com/firdaus_makeover?igsh=MXJlemE0aWZoMzAxaw==",
       className: "bg-pink-500 hover:bg-pink-600"
     },
     {
-      icon: Facebook,
-      label: "Facebook",
-      href: "#",
+      icon: Mail,
+      label: "Email Us",
+      href: "mailto:firdauspathan47@gmail.com",
       className: "bg-blue-500 hover:bg-blue-600"
     }
   ];
@@ -129,7 +133,7 @@ const Contact = () => {
         `Please confirm this booking at your earliest convenience.`;
 
       const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/918799132161?text=${encodedMessage}`;
+      const whatsappUrl = `https://wa.me/918401050169?text=${encodedMessage}`;
 
       // Show success toast 
       toast({
@@ -363,8 +367,10 @@ const Contact = () => {
                         <p key={i} className="text-muted-foreground">{detail}</p>
                       ))}
                     </div>
-                    <Button variant="outline" size="sm">
-                      {info.action}
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={info.href} target={info.href.startsWith('http') || info.href.startsWith('mailto') || info.href.startsWith('tel') ? '_blank' : undefined}>
+                        {info.action}
+                      </a>
                     </Button>
                   </CardContent>
                 </Card>
