@@ -39,30 +39,30 @@ const Home = () => {
           <img 
             src={heroImage} 
             alt="Bridal Makeover" 
-            className="w-full h-full object-cover animate-scale-in"
+            className="w-full h-full object-cover animate-hero-bg"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
         
         <div className="relative container mx-auto px-4 text-center text-white">
-          <div className="max-w-4xl mx-auto animate-fade-in-up">
-            <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-hero-title">
               Welcome to <span className="text-primary-glow">Firdaus Makeover</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-slide-up">
+            <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-hero-subtitle">
               Where Beauty Meets Elegance
             </p>
-            <p className="text-lg mb-12 max-w-2xl mx-auto text-gray-300 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+            <p className="text-lg mb-12 max-w-2xl mx-auto text-gray-300 animate-hero-text">
               Transform your special moments with our premium beauty services. 
               Expert bridal makeup, party looks, and beauty treatments that make you shine.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.4s" }}>
-              <Button variant="hero" size="lg" asChild className="hover:scale-105 transition-transform">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-hero-buttons">
+              <Button variant="hero" size="lg" asChild className="hover:scale-105 transition-transform duration-200">
                 <Link to="/contact">
                   Book Appointment <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild className="text-black bg-white border-white hover:bg-gray-100 hover:scale-105 transition-transform">
+              <Button variant="outline" size="lg" asChild className="text-black bg-white border-white hover:bg-gray-100 hover:scale-105 transition-transform duration-200">
                 <Link to="/gallery">View Portfolio</Link>
               </Button>
             </div>

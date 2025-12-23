@@ -53,21 +53,15 @@ const Gallery = () => {
   return (
     <div className="space-y-16">
       {/* Header */}
-      <section 
-        className="relative py-32 text-white overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroGallery})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
+      <section className="relative py-32 text-white overflow-hidden">
+        <div className="absolute inset-0 animate-hero-bg" style={{ backgroundImage: `url(${heroGallery})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">Our Portfolio</h1>
-          <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto mb-8">
+          <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6 animate-hero-title">Our Portfolio</h1>
+          <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto mb-8 animate-hero-subtitle">
             Discover our stunning transformations and beauty creations
           </p>
-          <Badge variant="outline" className="text-white border-white px-4 py-2">
+          <Badge variant="outline" className="text-white border-white px-4 py-2 animate-hero-badge">
             <Eye className="w-4 h-4 mr-2" />
             500+ Happy Clients
           </Badge>
