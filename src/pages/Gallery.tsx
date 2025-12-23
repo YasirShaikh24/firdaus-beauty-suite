@@ -40,10 +40,7 @@ const Gallery = () => {
     { id: 11, src: "/gallery/hairstyling/image3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
     { id: 12, src: "/gallery/hairstyling/image4.png", alt: "Hair Styling 4", category: "hairstyling", title: "Modern Updo" },
     
-    // Featured/Overall images (3)
-    { id: 13, src: "/gallery/featured/image1.png", alt: "Featured Look 1", category: "all", title: "Signature Look" },
-    { id: 14, src: "/gallery/featured/image2.png", alt: "Featured Look 2", category: "all", title: "Best of Beauty" },
-    { id: 15, src: "/gallery/featured/image3.png", alt: "Featured Look 3", category: "all", title: "Top Creation" },
+    
   ];
 
   const filteredImages = activeFilter === "all" 
