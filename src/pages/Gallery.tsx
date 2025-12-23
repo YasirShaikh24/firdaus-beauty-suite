@@ -17,51 +17,33 @@ const Gallery = () => {
   ];
 
   // Gallery images - Add images to public/gallery/ folders:
-  // public/gallery/bridal/image1.png, image2.png, ... image12.png
-  // public/gallery/party/image1.png, image2.png, ... image12.png
-  // public/gallery/hairstyling/image1.png, image2.png, ... image12.png
+  // public/gallery/bridal/image1.png to image4.png
+  // public/gallery/party/image1.png to image4.png
+  // public/gallery/hairstyling/image1.png to image4.png
+  // public/gallery/featured/image1.png to image3.png
   const galleryImages = [
-    // Bridal images (12)
+    // Bridal images (4)
     { id: 1, src: "/gallery/bridal/image1.png", alt: "Bridal Makeup 1", category: "bridal", title: "Traditional Bridal Look" },
     { id: 2, src: "/gallery/bridal/image2.png", alt: "Bridal Makeup 2", category: "bridal", title: "Modern Bridal Makeup" },
     { id: 3, src: "/gallery/bridal/image3.png", alt: "Bridal Makeup 3", category: "bridal", title: "Reception Makeup" },
     { id: 4, src: "/gallery/bridal/image4.png", alt: "Bridal Makeup 4", category: "bridal", title: "Elegant Bridal Look" },
-    { id: 5, src: "/gallery/bridal/image5.png", alt: "Bridal Makeup 5", category: "bridal", title: "Classic Bridal Beauty" },
-    { id: 6, src: "/gallery/bridal/image6.png", alt: "Bridal Makeup 6", category: "bridal", title: "Stunning Bride" },
-    { id: 7, src: "/gallery/bridal/image7.png", alt: "Bridal Makeup 7", category: "bridal", title: "Royal Bridal Look" },
-    { id: 8, src: "/gallery/bridal/image8.png", alt: "Bridal Makeup 8", category: "bridal", title: "Graceful Bride" },
-    { id: 9, src: "/gallery/bridal/image9.png", alt: "Bridal Makeup 9", category: "bridal", title: "Timeless Beauty" },
-    { id: 10, src: "/gallery/bridal/image10.png", alt: "Bridal Makeup 10", category: "bridal", title: "Dreamy Bridal Look" },
-    { id: 11, src: "/gallery/bridal/image11.png", alt: "Bridal Makeup 11", category: "bridal", title: "Radiant Bride" },
-    { id: 12, src: "/gallery/bridal/image12.png", alt: "Bridal Makeup 12", category: "bridal", title: "Perfect Bridal Glow" },
     
-    // Party images (12)
-    { id: 13, src: "/gallery/party/image1.png", alt: "Party Makeup 1", category: "party", title: "Glamorous Evening Look" },
-    { id: 14, src: "/gallery/party/image2.png", alt: "Party Makeup 2", category: "party", title: "Cocktail Party Look" },
-    { id: 15, src: "/gallery/party/image3.png", alt: "Party Makeup 3", category: "party", title: "Birthday Party Glam" },
-    { id: 16, src: "/gallery/party/image4.png", alt: "Party Makeup 4", category: "party", title: "Night Out Look" },
-    { id: 17, src: "/gallery/party/image5.png", alt: "Party Makeup 5", category: "party", title: "Festive Glam" },
-    { id: 18, src: "/gallery/party/image6.png", alt: "Party Makeup 6", category: "party", title: "Celebration Ready" },
-    { id: 19, src: "/gallery/party/image7.png", alt: "Party Makeup 7", category: "party", title: "Stunning Party Look" },
-    { id: 20, src: "/gallery/party/image8.png", alt: "Party Makeup 8", category: "party", title: "Elegant Evening" },
-    { id: 21, src: "/gallery/party/image9.png", alt: "Party Makeup 9", category: "party", title: "Chic Party Style" },
-    { id: 22, src: "/gallery/party/image10.png", alt: "Party Makeup 10", category: "party", title: "Dazzling Look" },
-    { id: 23, src: "/gallery/party/image11.png", alt: "Party Makeup 11", category: "party", title: "Sparkle Ready" },
-    { id: 24, src: "/gallery/party/image12.png", alt: "Party Makeup 12", category: "party", title: "Party Perfect" },
+    // Party images (4)
+    { id: 5, src: "/gallery/party/image1.png", alt: "Party Makeup 1", category: "party", title: "Glamorous Evening Look" },
+    { id: 6, src: "/gallery/party/image2.png", alt: "Party Makeup 2", category: "party", title: "Cocktail Party Look" },
+    { id: 7, src: "/gallery/party/image3.png", alt: "Party Makeup 3", category: "party", title: "Birthday Party Glam" },
+    { id: 8, src: "/gallery/party/image4.png", alt: "Party Makeup 4", category: "party", title: "Night Out Look" },
     
-    // Hair Styling images (12)
-    { id: 25, src: "/gallery/hairstyling/image1.png", alt: "Hair Styling 1", category: "hairstyling", title: "Elegant Hair Styling" },
-    { id: 26, src: "/gallery/hairstyling/image2.png", alt: "Hair Styling 2", category: "hairstyling", title: "Bridal Hair Styling" },
-    { id: 27, src: "/gallery/hairstyling/image3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
-    { id: 28, src: "/gallery/hairstyling/image4.png", alt: "Hair Styling 4", category: "hairstyling", title: "Modern Updo" },
-    { id: 29, src: "/gallery/hairstyling/image5.png", alt: "Hair Styling 5", category: "hairstyling", title: "Classic Waves" },
-    { id: 30, src: "/gallery/hairstyling/image6.png", alt: "Hair Styling 6", category: "hairstyling", title: "Glamorous Curls" },
-    { id: 31, src: "/gallery/hairstyling/image7.png", alt: "Hair Styling 7", category: "hairstyling", title: "Sleek Style" },
-    { id: 32, src: "/gallery/hairstyling/image8.png", alt: "Hair Styling 8", category: "hairstyling", title: "Braided Beauty" },
-    { id: 33, src: "/gallery/hairstyling/image9.png", alt: "Hair Styling 9", category: "hairstyling", title: "Boho Chic" },
-    { id: 34, src: "/gallery/hairstyling/image10.png", alt: "Hair Styling 10", category: "hairstyling", title: "Elegant Bun" },
-    { id: 35, src: "/gallery/hairstyling/image11.png", alt: "Hair Styling 11", category: "hairstyling", title: "Flowing Locks" },
-    { id: 36, src: "/gallery/hairstyling/image12.png", alt: "Hair Styling 12", category: "hairstyling", title: "Perfect Finish" },
+    // Hair Styling images (4)
+    { id: 9, src: "/gallery/hairstyling/image1.png", alt: "Hair Styling 1", category: "hairstyling", title: "Elegant Hair Styling" },
+    { id: 10, src: "/gallery/hairstyling/image2.png", alt: "Hair Styling 2", category: "hairstyling", title: "Bridal Hair Styling" },
+    { id: 11, src: "/gallery/hairstyling/image3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
+    { id: 12, src: "/gallery/hairstyling/image4.png", alt: "Hair Styling 4", category: "hairstyling", title: "Modern Updo" },
+    
+    // Featured/Overall images (3)
+    { id: 13, src: "/gallery/featured/image1.png", alt: "Featured Look 1", category: "all", title: "Signature Look" },
+    { id: 14, src: "/gallery/featured/image2.png", alt: "Featured Look 2", category: "all", title: "Best of Beauty" },
+    { id: 15, src: "/gallery/featured/image3.png", alt: "Featured Look 3", category: "all", title: "Top Creation" },
   ];
 
   const filteredImages = activeFilter === "all" 
