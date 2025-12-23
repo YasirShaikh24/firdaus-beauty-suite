@@ -16,25 +16,34 @@ const Gallery = () => {
     { id: "hairstyling", name: "Hair Styling" },
   ];
 
-  // Gallery images - Simply add images with these naming patterns to public/gallery/:
-  // bridal1.png, bridal2.png, bridal3.png...
-  // party1.png, party2.png, party3.png...
-  // hairstyling1.png, hairstyling2.png, hairstyling3.png...
+  // Gallery images - Add images to public/gallery/ folders:
+  // public/gallery/bridal/image1.png to image4.png
+  // public/gallery/party/image1.png to image4.png
+  // public/gallery/hairstyling/image1.png to image4.png
+  // public/gallery/featured/image1.png to image3.png
   const galleryImages = [
-    // Bridal images
-    { id: 1, src: "/gallery/bridal1.png", alt: "Bridal Makeup 1", category: "bridal", title: "Traditional Bridal Look" },
-    { id: 2, src: "/gallery/bridal2.png", alt: "Bridal Makeup 2", category: "bridal", title: "Modern Bridal Makeup" },
-    { id: 3, src: "/gallery/bridal3.png", alt: "Bridal Makeup 3", category: "bridal", title: "Reception Makeup" },
+    // Bridal images (4)
+    { id: 1, src: "/gallery/bridal/image1.png", alt: "Bridal Makeup 1", category: "bridal", title: "Traditional Bridal Look" },
+    { id: 2, src: "/gallery/bridal/image2.png", alt: "Bridal Makeup 2", category: "bridal", title: "Modern Bridal Makeup" },
+    { id: 3, src: "/gallery/bridal/image3.png", alt: "Bridal Makeup 3", category: "bridal", title: "Reception Makeup" },
+    { id: 4, src: "/gallery/bridal/image4.png", alt: "Bridal Makeup 4", category: "bridal", title: "Elegant Bridal Look" },
     
-    // Party images
-    { id: 4, src: "/gallery/party1.png", alt: "Party Makeup 1", category: "party", title: "Glamorous Evening Look" },
-    { id: 5, src: "/gallery/party2.png", alt: "Party Makeup 2", category: "party", title: "Cocktail Party Look" },
-    { id: 6, src: "/gallery/party3.png", alt: "Party Makeup 3", category: "party", title: "Birthday Party Glam" },
+    // Party images (4)
+    { id: 5, src: "/gallery/party/image1.png", alt: "Party Makeup 1", category: "party", title: "Glamorous Evening Look" },
+    { id: 6, src: "/gallery/party/image2.png", alt: "Party Makeup 2", category: "party", title: "Cocktail Party Look" },
+    { id: 7, src: "/gallery/party/image3.png", alt: "Party Makeup 3", category: "party", title: "Birthday Party Glam" },
+    { id: 8, src: "/gallery/party/image4.png", alt: "Party Makeup 4", category: "party", title: "Night Out Look" },
     
-    // Hair Styling images
-    { id: 7, src: "/gallery/hairstyling1.png", alt: "Hair Styling 1", category: "hairstyling", title: "Elegant Hair Styling" },
-    { id: 8, src: "/gallery/hairstyling2.png", alt: "Hair Styling 2", category: "hairstyling", title: "Bridal Hair Styling" },
-    { id: 9, src: "/gallery/hairstyling3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
+    // Hair Styling images (4)
+    { id: 9, src: "/gallery/hairstyling/image1.png", alt: "Hair Styling 1", category: "hairstyling", title: "Elegant Hair Styling" },
+    { id: 10, src: "/gallery/hairstyling/image2.png", alt: "Hair Styling 2", category: "hairstyling", title: "Bridal Hair Styling" },
+    { id: 11, src: "/gallery/hairstyling/image3.png", alt: "Hair Styling 3", category: "hairstyling", title: "Vintage Hair Style" },
+    { id: 12, src: "/gallery/hairstyling/image4.png", alt: "Hair Styling 4", category: "hairstyling", title: "Modern Updo" },
+    
+    // Featured/Overall images (3)
+    { id: 13, src: "/gallery/featured/image1.png", alt: "Featured Look 1", category: "all", title: "Signature Look" },
+    { id: 14, src: "/gallery/featured/image2.png", alt: "Featured Look 2", category: "all", title: "Best of Beauty" },
+    { id: 15, src: "/gallery/featured/image3.png", alt: "Featured Look 3", category: "all", title: "Top Creation" },
   ];
 
   const filteredImages = activeFilter === "all" 
@@ -98,10 +107,10 @@ const Gallery = () => {
                   <img 
                     src={image.src} 
                     alt={image.alt}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      // Fallback if image doesn't exist
-                      e.currentTarget.src = '/api/placeholder/400/500';
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
                 </AspectRatio>
