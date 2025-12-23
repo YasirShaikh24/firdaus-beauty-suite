@@ -1,10 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Phone, MessageCircle, Calendar, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasShownInitial, setHasShownInitial] = useState(false);
+
+  // Auto-show on first load
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem('hasVisitedBefore');
+    
+    if (!hasVisited) {
+      // Show buttons after a brief delay
+      setTimeout(() => {
+        setIsOpen(true);
+        setHasShownInitial(true);
+      }, 500);
+
+      // Hide after 2 seconds
+      setTimeout(() => {
+        setIsOpen(false);
+        sessionStorage.setItem('hasVisitedBefore', 'true');
+      }, 2500);
+    }
+  }, []);
+
+  // Close when clicking anywhere on the page
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Don't close if clicking on the floating contact buttons themselves
+      if (!target.closest('[data-floating-contact]')) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen && hasShownInitial) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen, hasShownInitial]);
 
   const contactOptions = [
     {
@@ -31,7 +70,7 @@ const FloatingContact = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end" data-floating-contact>
       {/* Contact Options */}
       {isOpen && (
         <div className="flex flex-col space-y-3 mb-4 animate-fade-in-up">

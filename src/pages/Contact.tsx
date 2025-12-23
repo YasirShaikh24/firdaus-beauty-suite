@@ -17,7 +17,9 @@ const Contact = () => {
     phone: "",
     service: "",
     date: "",
-    time: "",
+    hour: "",
+    minute: "",
+    period: "AM",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,12 +92,23 @@ const Contact = () => {
     "Other"
   ];
 
+  // Generate hours 1-12
+  const hours = Array.from({ length: 12 }, (_, i) => {
+    const hour = i + 1;
+    return hour.toString().padStart(2, '0');
+  });
+
+  // Generate minutes 00-59
+  const minutes = Array.from({ length: 60 }, (_, i) => {
+    return i.toString().padStart(2, '0');
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     // Basic validation
-    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
+    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.hour || !formData.minute) {
       toast({
         title: "Please fill required fields",
         description: "Name, phone, service, date, and time are required.",
@@ -114,12 +127,8 @@ const Contact = () => {
         'July', 'August', 'September', 'October', 'November', 'December'];
       const formattedDate = `${parseInt(day)} ${monthNames[parseInt(month) - 1]} ${year}`;
       
-      // Format time from the time input (HH:MM)
-      const [hours, minutes] = formData.time.split(':');
-      const hour24 = parseInt(hours);
-      const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
-      const ampm = hour24 >= 12 ? 'PM' : 'AM';
-      const formattedTime = `${hour12}:${minutes} ${ampm}`;
+      // Format time
+      const formattedTime = `${formData.hour}:${formData.minute} ${formData.period}`;
 
       // Create WhatsApp message
       const message = `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
@@ -153,7 +162,9 @@ const Contact = () => {
         phone: "",
         service: "",
         date: "",
-        time: "",
+        hour: "",
+        minute: "",
+        period: "AM",
         message: ""
       });
 
@@ -305,14 +316,44 @@ const Contact = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="time">Preferred Time *</Label>
-                  <Input
-                    id="time"
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) => handleInputChange("time", e.target.value)}
-                    required
-                  />
+                  <Label>Preferred Time *</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Select value={formData.hour} onValueChange={(value) => handleInputChange("hour", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Hour" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {hours.map((hour) => (
+                          <SelectItem key={hour} value={hour}>
+                            {hour}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={formData.minute} onValueChange={(value) => handleInputChange("minute", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Minute" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {minutes.map((minute) => (
+                          <SelectItem key={minute} value={minute}>
+                            {minute}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={formData.period} onValueChange={(value) => handleInputChange("period", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="AM/PM" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
