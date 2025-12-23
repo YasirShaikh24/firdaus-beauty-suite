@@ -94,12 +94,12 @@ const Gallery = () => {
           ))}
         </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+        {/* Horizontal Grid - 4 images per row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {filteredImages.map((image) => (
             <div 
               key={image.id} 
-              className="break-inside-avoid group cursor-pointer"
+              className="group cursor-pointer"
               onClick={() => setSelectedImage(image.src)}
             >
               <div className="relative overflow-hidden rounded-lg shadow-card hover:shadow-elegant transition-all duration-300">
