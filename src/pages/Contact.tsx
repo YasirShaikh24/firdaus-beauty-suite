@@ -176,18 +176,12 @@ const Contact = () => {
   return (
     <div className="space-y-16">
       {/* Header */}
-      <section 
-        className="relative py-32 text-white overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroContact})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
+      <section className="relative py-32 text-white overflow-hidden">
+        <div className="absolute inset-0 animate-hero-bg" style={{ backgroundImage: `url(${heroContact})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">Get In Touch</h1>
-          <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
+          <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6 animate-hero-title">Get In Touch</h1>
+          <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto animate-hero-subtitle">
             Ready to transform your look? We're here to make your beauty dreams come true
           </p>
         </div>

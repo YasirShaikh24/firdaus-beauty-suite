@@ -137,19 +137,19 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
 /* Beauty Parlor Custom Animations */
 @layer utilities {
   .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
+    animation: fadeInUp 0.4s ease-out forwards;
   }
   
   .animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
+    animation: fadeIn 0.3s ease-out forwards;
   }
   
   .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
+    animation: slideUp 0.35s ease-out forwards;
   }
   
   .animate-scale-in {
-    animation: scaleIn 1.2s ease-out forwards;
+    animation: scaleIn 0.6s ease-out forwards;
   }
   
   .animate-float {
@@ -158,6 +158,38 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
   
   .animate-pulse-soft {
     animation: pulseSoft 2s ease-in-out infinite;
+  }
+  
+  .animate-hero-title {
+    animation: heroTitle 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .animate-hero-subtitle {
+    animation: heroSubtitle 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    opacity: 0;
+  }
+  
+  .animate-hero-text {
+    animation: heroText 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    opacity: 0;
+  }
+  
+  .animate-hero-buttons {
+    animation: heroButtons 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    opacity: 0;
+  }
+  
+  .animate-hero-badge {
+    animation: heroBadge 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+    opacity: 0;
+  }
+  
+  .animate-hero-bg {
+    animation: heroBg 0.8s ease-out forwards;
+  }
+  
+  .animate-zoom-in {
+    animation: zoomIn 0.5s ease-out forwards;
   }
   
   .gradient-hero {
@@ -188,7 +220,7 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -208,7 +240,7 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -218,7 +250,7 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
 
 @keyframes scaleIn {
   from {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   to {
     transform: scale(1);
@@ -240,5 +272,83 @@ All colors MUST be HSL. Premium rose gold & pastel pink theme.
   }
   50% {
     opacity: 0.8;
+  }
+}
+
+/* Hero Section Fast Animations */
+@keyframes heroTitle {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroSubtitle {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroText {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroButtons {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroBadge {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroBg {
+  from {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
