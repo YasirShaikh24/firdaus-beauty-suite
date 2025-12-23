@@ -260,7 +260,7 @@ const Contact = () => {
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="+91 87991 32161"
+                        placeholder="+91 84010 50169"
                         value={formData.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
                         className="pl-10"
@@ -277,7 +277,7 @@ const Contact = () => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="yasirazimshaikh5440@gmail.com"
+                      placeholder="example@gmail.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       className="pl-10"
