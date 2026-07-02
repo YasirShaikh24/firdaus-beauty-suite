@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,9 +17,14 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-card">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:scale-105 transition-transform">
-            <img src={logo} alt="Firdaus Makeover" className="h-10 w-10" />
+            <img
+              src="/firdaus-makeover-logo.png"
+              alt="Firdaus Makeover Logo"
+              className="h-12 w-12 rounded-full object-contain"
+            />
             <div>
               <h1 className="font-playfair font-bold text-xl text-primary">FIRDAUS</h1>
               <p className="font-playfair text-sm text-foreground font-semibold -mt-1">MAKEOVER</p>
@@ -42,7 +46,7 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Button variant="hero" size="sm" asChild>
+            <Button variant="hero" size="sm" asChild className="animate-bounce-cta">
               <Link to="/contact">Book Now</Link>
             </Button>
           </div>
@@ -56,6 +60,7 @@ const Header = () => {
           >
             {isMenuOpen ? <X /> : <Menu />}
           </Button>
+
         </div>
 
         {/* Mobile Navigation */}
@@ -80,6 +85,7 @@ const Header = () => {
             </nav>
           </div>
         )}
+
       </div>
     </header>
   );
