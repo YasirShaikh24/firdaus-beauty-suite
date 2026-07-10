@@ -14,7 +14,7 @@ const WhatsAppIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
   </svg>
 );
 
-const MAPS_URL = "https://maps.google.com/?q=Shiraz+Dairy,+Mission+Colony,+Near+CB+High+School,+Halar+Road,+Valsad,+Gujarat+396001";
+const MAPS_URL = "https://www.google.com/maps/place/Firdaus+Makeover+Beauty+Salon/@20.601465,72.9281854,17z/data=!3m1!1e3!4m6!3m5!1s0x3be0c33a55b925f9:0x56036b572d5f5054!8m2!3d20.601465!4d72.9281854!16s%2Fg%2F11rj01k2bz";
 const INSTAGRAM_URL = "https://www.instagram.com/firdaus_makeover?igsh=MXJlemE0aWZoMzAxaw==";
 
 const Footer = () => (
@@ -164,9 +164,9 @@ const Footer = () => (
                 <MapPin className="h-4 w-4 text-pink-500" />
               </div>
               <p className="text-muted-foreground text-sm group-hover:text-primary transition-colors leading-snug">
-                Mission Colony, Next to Shiraz Dairy,<br />
-                Near CB High School, Halar Road,<br />
-                Valsad – 396001, Gujarat
+                Halar Rd, near Shiraz Bakery,<br />
+                near Budgetlengha, Mission Colony,<br />
+                Kapadia Chal, Valsad – 396001, Gujarat
               </p>
             </a>
           </div>
