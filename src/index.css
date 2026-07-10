@@ -386,6 +386,12 @@ section {
 .reveal-stagger > *:nth-child(3) { transition-delay: 0.2s; }
 .reveal-stagger > *:nth-child(4) { transition-delay: 0.3s; }
 
+/* ── Splash screen loading dots ── */
+@keyframes splashDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1.2); opacity: 1; }
+}
+
 /* ── Hero background slow Ken Burns zoom ── */
 @keyframes heroZoom {
   0% {

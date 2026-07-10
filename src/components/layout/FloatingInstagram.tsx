@@ -5,17 +5,17 @@ const FloatingInstagram = () => {
   const [blink, setBlink] = useState(false);
 
   useEffect(() => {
-    // Small delay so page finishes loading before animating
+    // Show tooltip after 30 seconds
     const showTimer = setTimeout(() => {
       setShowTooltip(true);
       setBlink(true);
-    }, 800);
+    }, 30000);
 
-    // Hide tooltip after 2 seconds of showing
+    // Hide tooltip 4 seconds after showing
     const hideTimer = setTimeout(() => {
       setShowTooltip(false);
       setBlink(false);
-    }, 2800);
+    }, 34000);
 
     return () => {
       clearTimeout(showTimer);
