@@ -30,20 +30,19 @@ const FloatingContact = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      // Don't close if clicking on the floating contact buttons themselves
       if (!target.closest('[data-floating-contact]')) {
         setIsOpen(false);
       }
     };
 
-    if (isOpen && hasShownInitial) {
+    if (isOpen) {
       document.addEventListener('click', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isOpen, hasShownInitial]);
+  }, [isOpen]);
 
   const contactOptions = [
     {

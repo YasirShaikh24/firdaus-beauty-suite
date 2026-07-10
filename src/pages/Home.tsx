@@ -94,7 +94,7 @@ const Home = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center">
         <div className="absolute inset-0 overflow-hidden">
-          <img src={heroImage} alt="Bridal Makeover" className="w-full h-full object-cover animate-hero-bg" />
+          <img src={heroImage} alt="Bridal Makeover" className="w-full h-full object-cover animate-hero-zoom" />
           <div className="absolute inset-0 bg-black/40" />
         </div>
         <div className="relative container mx-auto px-4 text-center text-white">
@@ -233,10 +233,6 @@ const Home = () => {
             <Reveal direction="from-right">
               <div className="relative overflow-hidden rounded-3xl shadow-[0_20px_60px_rgba(236,72,153,0.20)] border-2 border-pink-200">
                 <video src="/Makeup.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
-                <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border border-pink-100 shadow-lg">
-                  <p className="font-playfair font-bold text-primary text-sm">🏆 Best Makeover Artist Award</p>
-                  <p className="text-xs text-muted-foreground">Recognized for excellence in beauty artistry</p>
-                </div>
               </div>
             </Reveal>
           </div>

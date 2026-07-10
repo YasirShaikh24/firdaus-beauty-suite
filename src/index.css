@@ -386,6 +386,24 @@ section {
 .reveal-stagger > *:nth-child(3) { transition-delay: 0.2s; }
 .reveal-stagger > *:nth-child(4) { transition-delay: 0.3s; }
 
+/* ── Hero background slow Ken Burns zoom ── */
+@keyframes heroZoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-hero-zoom {
+  animation: heroZoom 8s ease-in-out infinite;
+  transform-origin: center center;
+}
+
 /* ── Header Book Now bounce ── */
 @keyframes bounceCta {
   0%, 100% {
