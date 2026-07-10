@@ -6,8 +6,8 @@ const SplashScreen = ({ onDone }: { onDone: () => void }) => {
   useEffect(() => {
     // Slide in immediately, hold, then fade out
     const holdTimer  = setTimeout(() => setPhase("hold"), 100);
-    const exitTimer  = setTimeout(() => setPhase("exit"), 4200);
-    const doneTimer  = setTimeout(() => onDone(),         5000);
+    const exitTimer  = setTimeout(() => setPhase("exit"), 2300);
+    const doneTimer  = setTimeout(() => onDone(),         3000);
 
     return () => {
       clearTimeout(holdTimer);
@@ -36,11 +36,11 @@ const SplashScreen = ({ onDone }: { onDone: () => void }) => {
       />
 
       {/* ── Main card ── */}
-      <div className="relative flex items-center gap-6 md:gap-10">
+      <div className="relative flex items-center gap-4 md:gap-8 px-6 max-w-sm md:max-w-lg w-full">
 
         {/* LOGO — slides in from LEFT */}
         <div
-          className="transition-all duration-700 ease-out"
+          className="transition-all duration-700 ease-out flex-shrink-0"
           style={{
             transform: entered ? "translateX(0)" : "translateX(-120px)",
             opacity: entered ? 1 : 0,
@@ -50,7 +50,7 @@ const SplashScreen = ({ onDone }: { onDone: () => void }) => {
           <img
             src="/firdaus-makeover-logo.png"
             alt="Firdaus Makeover"
-            className="w-28 h-28 md:w-40 md:h-40 rounded-full object-contain
+            className="w-20 h-20 md:w-28 md:h-28 rounded-full object-contain
                        shadow-[0_8px_32px_rgba(236,72,153,0.18)]
                        border-2 border-pink-200"
           />
@@ -58,41 +58,41 @@ const SplashScreen = ({ onDone }: { onDone: () => void }) => {
 
         {/* TEXT — slides in from RIGHT */}
         <div
-          className="transition-all duration-700 ease-out"
+          className="transition-all duration-700 ease-out min-w-0"
           style={{
             transform: entered ? "translateX(0)" : "translateX(120px)",
             opacity: entered ? 1 : 0,
             transitionDelay: "80ms",
           }}
         >
-          {/* FIRDAUS — pink, Playfair, bold — same as header */}
+          {/* FIRDAUS — pink, Playfair, bold */}
           <h1
             className="font-playfair font-bold leading-none"
             style={{
-              fontSize: "clamp(3rem, 10vw, 5.5rem)",
-              color: "hsl(345 70% 58%)",   /* --primary */
+              fontSize: "clamp(2.2rem, 8vw, 4.5rem)",
+              color: "hsl(345 70% 58%)",
               letterSpacing: "0.04em",
             }}
           >
             FIRDAUS
           </h1>
 
-          {/* MAKEOVER — dark/black, Playfair, bold — same as header sub */}
+          {/* MAKEOVER — dark, Playfair, bold */}
           <h2
             className="font-playfair font-bold leading-none"
             style={{
-              fontSize: "clamp(1.6rem, 5.5vw, 3.2rem)",
-              color: "hsl(345 15% 15%)",   /* --foreground */
-              letterSpacing: "0.18em",
+              fontSize: "clamp(1.1rem, 4vw, 2.4rem)",
+              color: "hsl(345 15% 15%)",
+              letterSpacing: "0.16em",
               marginTop: "0.1em",
             }}
           >
             MAKEOVER
           </h2>
 
-          {/* Thin pink underline that grows in */}
+          {/* Thin pink underline */}
           <div
-            className="mt-3 h-0.5 rounded-full transition-all duration-700 ease-out"
+            className="mt-2 h-0.5 rounded-full transition-all duration-700 ease-out"
             style={{
               background: "linear-gradient(90deg, hsl(345 70% 58%), hsl(335 65% 78%))",
               width: entered ? "100%" : "0%",
@@ -102,10 +102,10 @@ const SplashScreen = ({ onDone }: { onDone: () => void }) => {
 
           {/* Tagline */}
           <p
-            className="mt-2 font-poppins text-xs md:text-sm tracking-widest uppercase
+            className="mt-1.5 font-poppins text-[10px] md:text-xs tracking-widest uppercase
                        transition-all duration-500"
             style={{
-              color: "hsl(345 15% 55%)",   /* --muted-foreground */
+              color: "hsl(345 15% 55%)",
               opacity: entered ? 1 : 0,
               transitionDelay: "500ms",
             }}
