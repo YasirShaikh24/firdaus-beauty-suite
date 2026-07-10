@@ -38,7 +38,7 @@ const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", service: "",
-    date: "", hour: "", minute: "", period: "AM", message: ""
+    date: "", message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -85,15 +85,13 @@ const Contact = () => {
   ];
 
   const services = ["Bridal Makeup", "Engagement Makeup", "Party Makeup", "Hair Styling", "Skin Treatment", "Complete Package", "Other"];
-  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.hour || !formData.minute) {
-      toast({ title: "Please fill required fields", description: "Name, phone, service, date, and time are required.", variant: "destructive" });
+    if (!formData.name || !formData.phone || !formData.service || !formData.date) {
+      toast({ title: "Please fill required fields", description: "Name, phone, service, and date are required.", variant: "destructive" });
       setIsSubmitting(false);
       return;
     }
@@ -102,18 +100,17 @@ const Contact = () => {
       const [year, month, day] = formData.date.split("-");
       const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       const formattedDate = `${parseInt(day)} ${monthNames[parseInt(month) - 1]} ${year}`;
-      const formattedTime = `${formData.hour}:${formData.minute} ${formData.period}`;
 
       const message =
         `*✨ NEW APPOINTMENT REQUEST - Firdaus Makeover ✨*\n\n` +
         `*Name:* ${formData.name}\n*Service:* ${formData.service}\n*Date:* ${formattedDate}\n` +
-        `*Time:* ${formattedTime}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email || "N/A"}\n` +
+        `*Phone:* ${formData.phone}\n*Email:* ${formData.email || "N/A"}\n` +
         `*Notes:* ${formData.message || "None"}\n\nPlease confirm this booking at your earliest convenience.`;
 
       toast({ title: "Opening WhatsApp...", description: "Your booking request is ready to send!" });
       setTimeout(() => window.open(`https://wa.me/918401050169?text=${encodeURIComponent(message)}`, "_blank"), 500);
 
-      setFormData({ name: "", email: "", phone: "", service: "", date: "", hour: "", minute: "", period: "AM", message: "" });
+      setFormData({ name: "", email: "", phone: "", service: "", date: "", message: "" });
     } catch {
       toast({ title: "Something went wrong", description: "Please try again or contact us directly.", variant: "destructive" });
     } finally {
@@ -217,27 +214,6 @@ const Contact = () => {
                     <div className="space-y-2">
                       <Label htmlFor="date">Preferred Date *</Label>
                       <Input id="date" type="date" value={formData.date} onChange={(e) => handleInputChange("date", e.target.value)} min={new Date().toISOString().split("T")[0]} required />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Preferred Time *</Label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Select value={formData.hour} onValueChange={(v) => handleInputChange("hour", v)}>
-                        <SelectTrigger><SelectValue placeholder="Hour" /></SelectTrigger>
-                        <SelectContent>{hours.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}</SelectContent>
-                      </Select>
-                      <Select value={formData.minute} onValueChange={(v) => handleInputChange("minute", v)}>
-                        <SelectTrigger><SelectValue placeholder="Minute" /></SelectTrigger>
-                        <SelectContent>{minutes.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-                      </Select>
-                      <Select value={formData.period} onValueChange={(v) => handleInputChange("period", v)}>
-                        <SelectTrigger><SelectValue placeholder="AM/PM" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AM">AM</SelectItem>
-                          <SelectItem value="PM">PM</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
 
