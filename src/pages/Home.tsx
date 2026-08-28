@@ -66,9 +66,9 @@ const Home = () => {
       color: "from-rose-400 to-pink-500", bg: "bg-rose-50", border: "border-rose-200"
     },
     {
-      icon: Eye, title: "Mehendi & Bridal Packages",
-      description: "Complete bridal packages including mehendi, hair, makeup and full day coverage.",
-      features: ["Full bridal package", "Mehendi design", "Hairstyling included", "Group bookings available"],
+      icon: Eye, title: "Bridal Packages",
+      description: "Complete bridal packages including hair, makeup and full day coverage for your most special day.",
+      features: ["Full bridal package", "Hairstyling included", "Reception makeup", "Group bookings available"],
       color: "from-fuchsia-400 to-rose-500", bg: "bg-fuchsia-50", border: "border-fuchsia-200"
     },
   ];
